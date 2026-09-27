@@ -23,11 +23,9 @@ import {
   Ban,
   MessageCircle,
   Mail,
-  KeyRound,
   RotateCcw,
   Repeat2,
   Star,
-  Handshake,
   CreditCard,
   Pencil,
   Bell,
@@ -2173,7 +2171,7 @@ function ItemDetailsModal({
             )}
           </div>
 
-          <div className="privacy-note"><ShieldCheck size={17} /><span>Exact owner location is never shown publicly. Handover details can be shared after a request is accepted.</span></div>
+          <div className="privacy-note"><ShieldCheck size={17} /><span>Exact owner location is never shown publicly. Contact details can be shared after a request is accepted.</span></div>
 
           <div className="details-actions upgraded-details-actions">
             <button className="secondary-button" onClick={onClose} type="button">Close</button>
@@ -2847,7 +2845,6 @@ function RequestsModal({
   const [loadError, setLoadError] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
   const [tab, setTab] = useState("received");
-  const [handoverRequest, setHandoverRequest] = useState(null);
   const [reviewRequest, setReviewRequest] = useState(null);
 
   useEffect(() => {
@@ -2952,7 +2949,7 @@ function RequestsModal({
     setActionLoading(null);
 
     const messages = {
-      accepted: "Borrow request accepted. Handover verification is ready.",
+      accepted: "Borrow request accepted. You can now coordinate the borrowing.",
       declined: "Borrow request declined.",
       cancelled: "Borrow request cancelled.",
     };
@@ -3028,7 +3025,7 @@ function RequestsModal({
 
         await loadRequests();
         setActionLoading(null);
-        onSuccess("Payment confirmed. The handover code is now unlocked.");
+        onSuccess("Payment confirmed. The borrowing is now active.");
       },
       modal: {
         ondismiss: () => {
@@ -3042,7 +3039,7 @@ function RequestsModal({
       setActionLoading(null);
       alert(
         response?.error?.description ||
-          "Payment failed. No handover code was unlocked."
+          "Payment failed. No payment was recorded."
       );
     });
 
@@ -3117,7 +3114,7 @@ function RequestsModal({
           <div>
             <div className="details-eyebrow">BORROWING ACTIVITY</div>
             <h2>Requests</h2>
-            <p>Track borrowing, handover, returns and your posted needs.</p>
+            <p>Track borrowing, payments, returns and your posted needs.</p>
           </div>
         </div>
 
@@ -3202,7 +3199,6 @@ function RequestsModal({
                 onPay={() => startPayment(request)}
                 onChat={() => onChat(request)}
                 onContact={() => onContact(request)}
-                onHandover={() => setHandoverRequest(request)}
                 onReturn={() => markReturned(request)}
                 onReview={() => setReviewRequest(request)}
                 onRequestItem={() => request.item && onRequestItem?.(request.item)}
@@ -3211,19 +3207,6 @@ function RequestsModal({
               />
             ))}
           </div>
-        )}
-
-        {handoverRequest && (
-          <HandoverModal
-            request={handoverRequest}
-            session={session}
-            onClose={() => setHandoverRequest(null)}
-            onSuccess={(message) => {
-              setHandoverRequest(null);
-              loadRequests();
-              onSuccess(message);
-            }}
-          />
         )}
 
         {reviewRequest && (
@@ -3254,7 +3237,6 @@ function RequestRow({
   onPay,
   onChat,
   onContact,
-  onHandover,
   onReturn,
   onReview,
   onRequestItem,
@@ -3357,13 +3339,10 @@ function RequestRow({
           ) : (
             <>
               <div className="accepted-label">
-                <Handshake size={15} />
-                {isOwner ? "Waiting for handover verification" : "Payment confirmed — show your handover code"}
+                <CheckCircle2 size={15} />
+                Payment confirmed — borrowing is starting
               </div>
               <div className="contact-actions request-action-grid">
-                <button className="contact-button" type="button" onClick={onHandover}>
-                  <KeyRound size={15} /> {isOwner ? "Verify handover" : "Handover code"}
-                </button>
                 <button className="contact-button" type="button" onClick={onChat}>
                   <MessageCircle size={15} /> Chat
                 </button>
@@ -3522,113 +3501,6 @@ function NeedRow({ need, loading, onClose, onRequestItem }) {
     </div>
   );
 }
-function HandoverModal({ request, session, onClose, onSuccess }) {
-  const isOwner = request.owner_id === session.user.id;
-  const [code, setCode] = useState("");
-  const [borrowerCode, setBorrowerCode] = useState("");
-  const [loading, setLoading] = useState(!isOwner);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (isOwner) return;
-
-    async function loadCode() {
-      const { data, error } = await supabase.rpc("get_handover_code", {
-        request_id: request.id,
-      });
-
-      if (error) {
-        console.error("Handover code error:", error);
-        setErrorMessage(error.message);
-      } else {
-        setBorrowerCode(data?.[0]?.handover_code || "");
-      }
-      setLoading(false);
-    }
-
-    loadCode();
-  }, [isOwner, request.id]);
-
-  async function verifyCode(event) {
-    event.preventDefault();
-    setErrorMessage("");
-
-    if (!/^\d{6}$/.test(code)) {
-      setErrorMessage("Enter the 6-digit handover code shown to the borrower.");
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await supabase.rpc("verify_handover", {
-      request_id: request.id,
-      code,
-    });
-
-    if (error) {
-      console.error("Handover verification error:", error);
-      setErrorMessage(error.message);
-      setLoading(false);
-      return;
-    }
-
-    onSuccess("Handover verified. The borrowing is now active.");
-  }
-
-  return (
-    <div className="modal-backdrop handover-backdrop">
-      <div className="modal handover-modal">
-        <button className="modal-close" onClick={onClose} type="button"><X size={20} /></button>
-        <div className="modal-icon"><KeyRound size={25} /></div>
-        <div className="request-item-label">HANDOVER VERIFICATION</div>
-        <h2>{isOwner ? "Verify the handover" : "Your handover code"}</h2>
-        <p className="modal-subtitle">
-          {isOwner
-            ? "Ask the borrower to show you their code. Enter it here only when you are physically handing over the item."
-            : "Show this code to the item owner at handover. Never share it publicly."
-          }
-        </p>
-
-        {isOwner ? (
-          <form onSubmit={verifyCode}>
-            <label>
-              6-digit code
-              <input
-                className="handover-code-input"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                value={code}
-                onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                placeholder="000000"
-                autoFocus
-              />
-            </label>
-            {errorMessage && <div className="form-error">{errorMessage}</div>}
-            <button className="modal-submit" type="submit" disabled={loading}>
-              {loading ? "Verifying..." : "Verify handover"}
-            </button>
-          </form>
-        ) : (
-          <>
-            {loading ? (
-              <div className="handover-code-loading"><LoaderCircle size={25} className="location-spin" /> Loading secure code...</div>
-            ) : borrowerCode ? (
-              <div className="handover-code-display">
-                {borrowerCode.split("").map((digit, index) => <span key={`${digit}-${index}`}>{digit}</span>)}
-              </div>
-            ) : (
-              <div className="form-error">{errorMessage || "The handover code is not available yet."}</div>
-            )}
-            <div className="privacy-note"><ShieldCheck size={17} /><span>Only show this code to the owner during the real handover.</span></div>
-            <button className="modal-submit" type="button" onClick={onClose}>Done</button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function ReviewModal({ request, session, onClose, onSuccess }) {
   const [rating, setRating] = useState(5);
   const [returnedOnTime, setReturnedOnTime] = useState(true);
