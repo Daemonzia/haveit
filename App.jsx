@@ -687,6 +687,7 @@ function App() {
       .from("items")
       .select("*")
       .eq("is_available", true)
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     const { data, error } = await query;
@@ -1077,7 +1078,6 @@ function App() {
                   Dashboard
                 </button>
 
-                {isAdmin && <button className="admin-nav-button" onClick={() => setAdminOpen(true)} type="button"><ShieldAlert size={16} /> Admin</button>}
                 <button className="install-nav-button" onClick={promptInstallApp} type="button"><Download size={16} /><span>Install</span></button>
 
                 <button type="button" className="user-pill" onClick={openProfile} title="View and edit your profile">
@@ -1587,6 +1587,12 @@ function App() {
           mode={authMode}
           setMode={setAuthMode}
           onClose={() => setAuthOpen(false)}
+          onAdminSuccess={() => {
+            setAuthOpen(false);
+            setAdminOpen(true);
+            setSuccessMessage("Admin access granted.");
+            setTimeout(() => setSuccessMessage(""), 3500);
+          }}
           onSuccess={() => {
             setAuthOpen(false);
 
@@ -1707,8 +1713,6 @@ function App() {
           onRequestLocation={requestLocation}
           onInstall={promptInstallApp}
           installAvailable={Boolean(installPromptEvent)}
-          isAdmin={isAdmin}
-          onAdmin={() => { setProfileOpen(false); setAdminOpen(true); }}
         />
       )}
 
@@ -1781,7 +1785,6 @@ function App() {
           favoriteIds={favoriteIds}
           blockedUserIds={blockedUserIds}
           waitlistedIds={waitlistedIds}
-          isAdmin={isAdmin}
           installAvailable={Boolean(installPromptEvent)}
           onInstall={promptInstallApp}
           onClose={() => setDashboardOpen(false)}
@@ -1791,6 +1794,7 @@ function App() {
           onAvailability={setAvailabilityItem}
           onUnblock={unblockUser}
           onWaitlist={toggleWaitlist}
+          onItemsChanged={loadItems}
         />
       )}
 
@@ -1966,12 +1970,19 @@ function AdminModal({ onClose }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState("overview");
+  const [adminItems, setAdminItems] = useState([]);
+  const [itemActionId, setItemActionId] = useState(null);
 
   async function load() {
     setRefreshing(true);
-    const { data: result, error } = await supabase.rpc("get_haveit_admin_dashboard_v1");
-    if (error) { alert(error.message); setRefreshing(false); setLoading(false); return; }
-    setData(result || null);
+    const [dashboardResponse, itemsResponse] = await Promise.all([
+      supabase.rpc("get_haveit_admin_dashboard_v1"),
+      supabase.rpc("get_haveit_admin_items_v1"),
+    ]);
+    if (dashboardResponse.error) { alert(dashboardResponse.error.message); setRefreshing(false); setLoading(false); return; }
+    if (itemsResponse.error) { alert(itemsResponse.error.message); setRefreshing(false); setLoading(false); return; }
+    setData(dashboardResponse.data || null);
+    setAdminItems(itemsResponse.data || []);
     setRefreshing(false);
     setLoading(false);
   }
@@ -1990,6 +2001,20 @@ function AdminModal({ onClose }) {
     await load();
   }
 
+  async function removeAdminItem(item) {
+    const confirmed = window.confirm(`Remove “${item.name}” from the marketplace?`);
+    if (!confirmed) return;
+    setItemActionId(item.id);
+    const { error } = await supabase.rpc("admin_delete_item_v1", { item_id_value: item.id });
+    if (error) {
+      alert(error.message || "Unable to remove listing.");
+      setItemActionId(null);
+      return;
+    }
+    await load();
+    setItemActionId(null);
+  }
+
   const stats = data?.stats || {};
   const reports = Array.isArray(data?.reports) ? data.reports : [];
   const payments = Array.isArray(data?.payments) ? data.payments : [];
@@ -2000,9 +2025,27 @@ function AdminModal({ onClose }) {
       <div className="admin-modal" onMouseDown={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} type="button"><X size={19} /></button>
         <div className="admin-header"><div><div className="details-eyebrow">OPERATIONS</div><h2>HaveIt Admin</h2><p>Keep the marketplace healthy from one place.</p></div><button type="button" className="secondary-button" onClick={load} disabled={refreshing}><RefreshCw size={15} className={refreshing ? "location-spin" : ""} /> Refresh</button></div>
-        <div className="admin-tabs">{[["overview","Overview"],["reports","Reports"],["payments","Payments"],["refunds","Refunds"]].map(([key,label]) => <button key={key} type="button" className={tab === key ? "active" : ""} onClick={() => setTab(key)}>{label}{key === "reports" && stats.open_reports ? <span>{stats.open_reports}</span> : null}</button>)}</div>
+        <div className="admin-tabs">{[["overview","Overview"],["items","Items"],["reports","Reports"],["payments","Payments"],["refunds","Refunds"]].map(([key,label]) => <button key={key} type="button" className={tab === key ? "active" : ""} onClick={() => setTab(key)}>{label}{key === "reports" && stats.open_reports ? <span>{stats.open_reports}</span> : null}</button>)}</div>
         {loading ? <div className="requests-loading"><LoaderCircle size={24} className="location-spin" /><span>Loading admin data…</span></div> : tab === "overview" ? (
           <div className="admin-content"><div className="admin-stat-grid"><div><span>Users</span><strong>{stats.users || 0}</strong></div><div><span>Available items</span><strong>{stats.available_items || 0}</strong></div><div><span>Open reports</span><strong>{stats.open_reports || 0}</strong></div><div><span>Paid volume</span><strong>{formatInrFromPaise(stats.paid_volume_paise || 0)}</strong></div></div><div className="admin-note"><ShieldCheck size={17} /><span>Admin data is returned by server-side functions. Payment secrets never enter the browser.</span></div></div>
+        ) : tab === "items" ? (
+          <div className="admin-list">
+            {adminItems.length === 0 ? (
+              <div className="dashboard-empty"><Store size={23} /><strong>No listings found.</strong><span>New item listings will appear here.</span></div>
+            ) : adminItems.map((item) => (
+              <div className={`admin-report-row admin-item-admin-row ${item.deleted_at ? "is-deleted" : ""}`} key={item.id}>
+                <div className="admin-item-thumb">{item.image_url ? <img src={item.image_url} alt="" /> : getCategoryIcon(item.category)}</div>
+                <div className="admin-report-copy">
+                  <strong>{item.name}</strong>
+                  <span>{item.category || "Other"} · {item.owner_name || "Unknown owner"} · {item.is_available ? "Available" : "Unavailable"}</span>
+                  <small>{item.owner_phone ? `Owner phone: ${item.owner_phone}` : "No phone added"} · Posted {formatRequestDate(item.created_at)}</small>
+                </div>
+                <div className="admin-row-actions">
+                  {item.deleted_at ? <span className="admin-status-pill">Removed</span> : <button type="button" className="tiny-action danger" onClick={() => removeAdminItem(item)} disabled={itemActionId === item.id}>{itemActionId === item.id ? <LoaderCircle size={14} className="location-spin" /> : <Trash2 size={14} />} Remove</button>}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : tab === "reports" ? (
           <div className="admin-list">{reports.length === 0 ? <div className="dashboard-empty"><Flag size={23} /><strong>No reports.</strong><span>Everything is clear right now.</span></div> : reports.map((report) => <div className="admin-report-row" key={report.id}><div className="admin-report-icon"><Flag size={16} /></div><div className="admin-report-copy"><strong>{report.reason}</strong><span>{report.target_type} · {report.status} · {formatRequestDate(report.created_at)}</span><small>{report.details || "No additional details."}</small></div><div className="admin-row-actions"><button type="button" className="tiny-action secondary" onClick={() => updateReport(report.id, "reviewing")}>Review</button><button type="button" className="tiny-action" onClick={() => updateReport(report.id, "resolved")}>Resolve</button></div></div>)}</div>
         ) : tab === "payments" ? (
@@ -2467,12 +2510,11 @@ function ProfileModal({
   onRequestLocation,
   onInstall,
   installAvailable,
-  isAdmin,
-  onAdmin,
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile?.name || "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
+  const [phoneNumber, setPhoneNumber] = useState(profile?.phone_number || "");
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [error, setError] = useState("");
@@ -2480,6 +2522,7 @@ function ProfileModal({
   useEffect(() => {
     setName(profile?.name || "");
     setAvatarUrl(profile?.avatar_url || "");
+    setPhoneNumber(profile?.phone_number || "");
   }, [profile]);
 
   async function uploadAvatar(file) {
@@ -2528,6 +2571,7 @@ function ProfileModal({
   async function saveProfile(event) {
     event.preventDefault();
     const trimmedName = name.trim();
+    const trimmedPhone = phoneNumber.trim();
 
     if (!trimmedName) {
       setError("Please enter your name.");
@@ -2542,6 +2586,7 @@ function ProfileModal({
       .update({
         name: trimmedName,
         avatar_url: avatarUrl.trim() || null,
+        phone_number: trimmedPhone || null,
       })
       .eq("id", session.user.id)
       .select("*")
@@ -2635,6 +2680,19 @@ function ProfileModal({
               />
             </label>
 
+            <label>
+              Contact number
+              <input
+                value={phoneNumber}
+                onChange={(event) => setPhoneNumber(event.target.value)}
+                placeholder="e.g. +91 98765 43210"
+                type="tel"
+                inputMode="tel"
+                maxLength={20}
+              />
+              <span className="profile-field-hint">Used for borrowing contact after a request is accepted. Not shown on public listings.</span>
+            </label>
+
             <div className="profile-upload-row">
               <div>
                 <strong>Profile photo</strong>
@@ -2669,6 +2727,7 @@ function ProfileModal({
                 onClick={() => {
                   setName(profile?.name || "");
                   setAvatarUrl(profile?.avatar_url || "");
+                  setPhoneNumber(profile?.phone_number || "");
                   setError("");
                   setEditing(false);
                 }}
@@ -2713,6 +2772,10 @@ function ProfileModal({
                 <strong>{session.user.email || "—"}</strong>
               </div>
               <div className="profile-detail-row">
+                <span>Contact number</span>
+                <strong>{profile?.phone_number || "Not added"}</strong>
+              </div>
+              <div className="profile-detail-row">
                 <span>Nearby results</span>
                 <strong>{hasLocation ? "Location enabled" : "Location not set"}</strong>
               </div>
@@ -2750,7 +2813,6 @@ function ProfileModal({
                 <Download size={16} />
                 {installAvailable ? "Install HaveIt" : "Install help"}
               </button>
-              {isAdmin && <button type="button" className="secondary-button" onClick={onAdmin}><ShieldAlert size={16} /> Admin panel</button>}
             </div>
 
             <button
@@ -4009,6 +4071,7 @@ function AuthModal({
   setMode,
   onClose,
   onSuccess,
+  onAdminSuccess,
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] =
@@ -4018,6 +4081,7 @@ function AuthModal({
 
   const [loading, setLoading] =
     useState(false);
+  const [adminMode, setAdminMode] = useState(false);
 
   const [errorMessage, setErrorMessage] =
     useState("");
@@ -4065,7 +4129,21 @@ function AuthModal({
       return;
     }
 
-    onSuccess();
+    if (adminMode) {
+      const { data: adminStatus, error: adminError } =
+        await supabase.rpc("get_my_admin_status_v1");
+
+      if (adminError || !adminStatus) {
+        await supabase.auth.signOut();
+        setErrorMessage("This account does not have HaveIt admin access.");
+        setLoading(false);
+        return;
+      }
+
+      onAdminSuccess();
+    } else {
+      onSuccess();
+    }
     setLoading(false);
   }
 
@@ -4086,13 +4164,17 @@ function AuthModal({
         </div>
 
         <h2>
-          {mode === "login"
+          {adminMode && mode === "login"
+            ? "HaveIt Admin"
+            : mode === "login"
             ? "Welcome back"
             : "Join HaveIt"}
         </h2>
 
         <p className="modal-subtitle">
-          {mode === "login"
+          {adminMode && mode === "login"
+            ? "Secure sign in for authorised HaveIt administrators."
+            : mode === "login"
             ? "Log in to borrow and lend items nearby."
             : "Create an account and start sharing with your neighborhood."}
         </p>
@@ -4174,19 +4256,30 @@ function AuthModal({
             : "Already have an account?"}
 
           <button
-            onClick={() =>
-              setMode(
-                mode === "login"
-                  ? "signup"
-                  : "login"
-              )
-            }
+            onClick={() => {
+              setAdminMode(false);
+              setMode(mode === "login" ? "signup" : "login");
+            }}
           >
             {mode === "login"
               ? "Sign up"
               : "Log in"}
           </button>
         </div>
+
+        {mode === "login" && (
+          <button
+            type="button"
+            className="auth-admin-link"
+            onClick={() => {
+              setAdminMode((current) => !current);
+              setErrorMessage("");
+            }}
+          >
+            <ShieldAlert size={14} />
+            {adminMode ? "Back to normal login" : "Admin access"}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -4439,8 +4532,9 @@ function NotificationPopover({ notifications, unreadCount, onClose, onMarkRead, 
   );
 }
 
-function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, waitlistedIds, isAdmin, installAvailable, onInstall, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist }) {
+function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, waitlistedIds, installAvailable, onInstall, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
   const [tab, setTab] = useState("overview");
+  const [deletingItemId, setDeletingItemId] = useState(null);
   const [activity, setActivity] = useState([]);
   const [myItems, setMyItems] = useState([]);
   const [favoriteItems, setFavoriteItems] = useState([]);
@@ -4473,6 +4567,23 @@ function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, 
     loadActivity();
     return () => { mounted = false; };
   }, [session.user.id]);
+
+  async function deleteMyItem(item) {
+    const confirmed = window.confirm(`Delete “${item.name}” from HaveIt? This will remove the listing from the marketplace.`);
+    if (!confirmed) return;
+
+    setDeletingItemId(item.id);
+    const { error } = await supabase.rpc("delete_my_item_v1", { item_id_value: item.id });
+    if (error) {
+      alert(error.message || "Unable to delete the listing.");
+      setDeletingItemId(null);
+      return;
+    }
+
+    setMyItems((current) => current.filter((entry) => entry.id !== item.id));
+    if (onItemsChanged) await onItemsChanged();
+    setDeletingItemId(null);
+  }
 
   const ownerRequests = activity.filter((row) => row.owner_id === session.user.id);
   const borrowerRequests = activity.filter((row) => row.borrower_id === session.user.id);
@@ -4512,7 +4623,6 @@ function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, 
               <button type="button" onClick={() => setTab("saved")}><Heart size={18} /><strong>Saved items</strong><span>{savedItems.length} available right now.</span></button>
               <button type="button" onClick={() => setTab("history")}><History size={18} /><strong>Transaction history</strong><span>Completed, cancelled and past borrows.</span></button>
               <button type="button" onClick={onInstall}><Download size={18} /><strong>{installAvailable ? "Install HaveIt" : "Phone install help"}</strong><span>Add HaveIt to your home screen.</span></button>
-              {isAdmin && <button type="button" onClick={onClose}><ShieldAlert size={18} /><strong>Admin controls</strong><span>Use the Admin button in the top bar.</span></button>}
             </div>
           </div>
         )}
@@ -4529,6 +4639,10 @@ function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, 
                     <span className={`dashboard-availability ${item.is_available ? "available" : "busy"}`}>{item.is_available ? "Available" : "Busy"}</span>
                     <button type="button" className="tiny-action" onClick={() => onAvailability(item)}><CalendarClock size={15} /> Calendar</button>
                     <button type="button" className="tiny-action secondary" onClick={() => onOpenItem(item)}>View</button>
+                    <button type="button" className="tiny-action danger" onClick={() => deleteMyItem(item)} disabled={deletingItemId === item.id}>
+                      {deletingItemId === item.id ? <LoaderCircle size={14} className="location-spin" /> : <Trash2 size={14} />}
+                      {deletingItemId === item.id ? "Removing" : "Delete"}
+                    </button>
                   </div>
                 ))}
               </div>
