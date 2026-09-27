@@ -2514,9 +2514,10 @@ function ProfileModal({
     const uploadFile = await prepareImageForUpload(file, 1000);
     const path = `${session.user.id}/profile/${crypto.randomUUID()}.jpg`;
 
+    const uploadBody = await uploadFile.arrayBuffer();
     const { error: uploadError } = await supabase.storage
       .from("haveit-images")
-      .upload(path, uploadFile, {
+      .upload(path, uploadBody, {
         cacheControl: "3600",
         upsert: false,
         contentType: "image/jpeg",
@@ -4241,9 +4242,10 @@ function AddItemModal({ location, onClose, onSuccess }) {
       try {
         const uploadFile = await prepareImageForUpload(imageFile);
         const filePath = `${currentSession.user.id}/items/${crypto.randomUUID()}.jpg`;
+        const uploadBody = await uploadFile.arrayBuffer();
         const { error: uploadError } = await supabase.storage
           .from("haveit-images")
-          .upload(filePath, uploadFile, {
+          .upload(filePath, uploadBody, {
             cacheControl: "3600",
             upsert: false,
             contentType: "image/jpeg",
