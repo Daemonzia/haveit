@@ -6818,3 +6818,378 @@ body {
   .compact-market-card .item-title-row h3 { font-size: 11.5px; }
   .compact-item-bottom .request-button { font-size: 9px; padding-left: 7px; padding-right: 7px; }
 }
+
+
+/* =========================================================
+   HAVEIT FINAL MARKETPLACE CARD RESET
+   Fixes oversized cards, stretched pills and excess whitespace.
+   Keep this block at the very end so it wins over legacy styles.
+========================================================= */
+
+.compact-market-card {
+  position: relative !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #e1e8e2 !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 14px rgba(25, 48, 32, 0.055) !important;
+  transform: none !important;
+}
+
+.compact-market-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 9px 22px rgba(25, 48, 32, 0.09) !important;
+}
+
+/* The media area is deliberately short and stable. */
+.compact-market-card .compact-card-media-wrap {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.compact-market-card .item-card-click {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+.compact-market-card .item-image {
+  position: relative !important;
+  width: 100% !important;
+  height: 170px !important;
+  aspect-ratio: auto !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  background: #f1f5f1 !important;
+}
+
+.compact-market-card .item-image img,
+.compact-market-card .item-placeholder {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+}
+
+/* Placeholder artwork stays centered rather than stretching. */
+.compact-market-card .item-placeholder {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 48px !important;
+}
+
+/* Category and price badges: explicitly reset every dimension so
+   they can never become vertical white bars. */
+.compact-market-card .item-category,
+.compact-market-card .item-free-pill,
+.compact-market-card .item-paid-pill {
+  position: absolute !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  max-width: calc(100% - 64px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 4px 7px !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  z-index: 3 !important;
+}
+
+.compact-market-card .item-category {
+  top: 9px !important;
+  left: 9px !important;
+  right: auto !important;
+  bottom: auto !important;
+  background: rgba(255,255,255,.94) !important;
+  color: #35453a !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+}
+
+.compact-market-card .item-free-pill,
+.compact-market-card .item-paid-pill {
+  top: 9px !important;
+  right: 9px !important;
+  left: auto !important;
+  bottom: auto !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+
+.compact-market-card .item-free-pill {
+  background: rgba(255,255,255,.95) !important;
+  color: #2f6a3f !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+}
+
+.compact-market-card .item-paid-pill {
+  background: #234d31 !important;
+  color: #fff !important;
+}
+
+/* Small, consistent heart button. */
+.compact-market-card .favorite-floating-button {
+  position: absolute !important;
+  top: 9px !important;
+  right: 9px !important;
+  z-index: 8 !important;
+  width: 31px !important;
+  height: 31px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(224,231,225,.95) !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.96) !important;
+  color: #657168 !important;
+  box-shadow: 0 3px 10px rgba(18,35,23,.10) !important;
+}
+
+/* Give the price badge room when the heart is present. */
+.compact-market-card .item-free-pill,
+.compact-market-card .item-paid-pill {
+  right: 48px !important;
+}
+
+/* Compact content — no giant vertical gaps. */
+.compact-market-card .compact-item-content {
+  padding: 9px 10px 10px !important;
+  min-width: 0 !important;
+}
+
+.compact-market-card .compact-item-open {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left !important;
+}
+
+.compact-market-card .item-title-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+.compact-market-card .item-title-row h3 {
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  color: #1f2b23 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.compact-market-card .availability-badge-inline {
+  flex: 0 0 auto !important;
+  padding: 4px 6px !important;
+  font-size: 7px !important;
+}
+
+.compact-market-card .compact-item-subline {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 5px !important;
+  overflow: hidden !important;
+  color: #68736b !important;
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+.compact-market-card .compact-item-bottom {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid #edf0ed !important;
+}
+
+.compact-market-card .item-owner-caption {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  color: #7a847d !important;
+  font-size: 9px !important;
+  white-space: nowrap !important;
+}
+
+.compact-market-card .item-bottom-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+.compact-market-card .tiny-icon-button {
+  width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+}
+
+.compact-market-card .request-button {
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 0 9px !important;
+  border-radius: 8px !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+}
+
+/* Marketplace density: five cards across on wide screens. */
+.items-grid,
+.recommendation-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.items-section,
+.recommendation-section {
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+/* Prevent a sparse final row from looking like one giant product. */
+.items-grid > *,
+.recommendation-grid > * {
+  min-width: 0 !important;
+}
+
+/* Desktop/tablet breakpoints. */
+@media (max-width: 1450px) {
+  .items-grid,
+  .recommendation-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .compact-market-card .item-image {
+    height: 160px !important;
+  }
+}
+
+@media (max-width: 1050px) {
+  .items-grid,
+  .recommendation-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .compact-market-card .item-image {
+    height: 155px !important;
+  }
+}
+
+/* Phone: two compact marketplace cards per row. */
+@media (max-width: 700px) {
+  .items-grid,
+  .recommendation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .items-section,
+  .recommendation-section {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .compact-market-card {
+    border-radius: 11px !important;
+  }
+
+  .compact-market-card .item-image {
+    height: 142px !important;
+  }
+
+  .compact-market-card .item-title-row h3 {
+    font-size: 12px !important;
+  }
+
+  .compact-market-card .availability-badge-inline {
+    display: none !important;
+  }
+
+  .compact-market-card .item-owner-caption {
+    display: none !important;
+  }
+
+  .compact-market-card .compact-item-bottom {
+    justify-content: flex-end !important;
+  }
+
+  .compact-market-card .item-bottom-actions {
+    width: 100% !important;
+  }
+
+  .compact-market-card .request-button {
+    flex: 1 1 auto !important;
+  }
+
+  .compact-market-card .item-category,
+  .compact-market-card .item-free-pill,
+  .compact-market-card .item-paid-pill {
+    font-size: 8px !important;
+    padding: 4px 6px !important;
+  }
+
+  .compact-market-card .favorite-floating-button {
+    width: 29px !important;
+    height: 29px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .items-grid,
+  .recommendation-grid {
+    gap: 7px !important;
+  }
+
+  .compact-market-card .item-image {
+    height: 130px !important;
+  }
+
+  .compact-market-card .compact-item-content {
+    padding: 8px !important;
+  }
+
+  .compact-market-card .request-button {
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+    font-size: 9px !important;
+  }
+}
