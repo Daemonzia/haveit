@@ -240,6 +240,7 @@ function App() {
   const [location, setLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
+  const [locationLabel, setLocationLabel] = useState("");
 
   const [authOpen, setAuthOpen] = useState(false);
   const [addItemOpen, setAddItemOpen] = useState(false);
@@ -311,6 +312,7 @@ function App() {
         } else {
           setProfile(null);
           setLocation(null);
+          setLocationLabel("");
           setFavoriteIds([]);
           setNotifications([]);
           setBlockedUserIds([]);
@@ -691,6 +693,9 @@ function App() {
         latitude: data.latitude,
         longitude: data.longitude,
       });
+      resolveLocationLabel(data.latitude, data.longitude).then((label) => {
+        if (label) setLocationLabel(label);
+      });
     }
   }
 
@@ -735,6 +740,25 @@ function App() {
     setNearbyNeedsLoading(false);
   }
 
+  async function resolveLocationLabel(latitude, longitude) {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&localityLanguage=en`
+      );
+      if (!response.ok) return "";
+      const data = await response.json();
+      const locality = data.locality || data.city || data.localityInfo?.administrative?.[2]?.name || "";
+      const region = data.principalSubdivision || "";
+      return [locality, region]
+        .filter(Boolean)
+        .filter((value, index, values) => values.indexOf(value) === index)
+        .join(", ");
+    } catch (error) {
+      console.warn("Location name lookup failed:", error);
+      return "";
+    }
+  }
+
   function requestLocation() {
     if (!session) {
       setAuthMode("login");
@@ -777,6 +801,9 @@ function App() {
             longitude,
           });
 
+          const resolvedLabel = await resolveLocationLabel(latitude, longitude);
+          setLocationLabel(resolvedLabel || "Current location");
+
           loadNearbyNeeds({ latitude, longitude });
 
           setProfile((current) =>
@@ -790,7 +817,9 @@ function App() {
           );
 
           setLocationMessage(
-            "Location enabled. Nearby results are now sorted for you."
+            resolvedLabel
+              ? `Current location: ${resolvedLabel}`
+              : "Current location updated. Nearby results are now sorted for you."
           );
         }
 
@@ -1091,15 +1120,16 @@ function App() {
               })
             }
           >
-            <img
-              className="brand-mark brand-logo-image"
-              src="/haveit-logo-mark.png"
-              alt="HaveIt"
-            />
+            <div className="brand-mark">H</div>
 
             <div>
-              <div className="brand-name">HaveIt</div>
-              <div className="brand-tagline">Trust • Share • Use</div>
+              <div className="brand-name">
+                HaveIt
+              </div>
+
+              <div className="brand-tagline">
+                Borrow locally.
+              </div>
             </div>
           </button>
 
@@ -1128,7 +1158,6 @@ function App() {
                   Dashboard
                 </button>
 
-                <button className="install-nav-button" onClick={promptInstallApp} type="button"><Download size={16} /><span>Install</span></button>
 
                 <button type="button" className="user-pill" onClick={openProfile} title="View and edit your profile">
                   <div className="user-avatar">
@@ -1173,7 +1202,7 @@ function App() {
         <div className="marketplace-topline">
           <button type="button" className="marketplace-location" onClick={requestLocation}>
             <span className="marketplace-location-icon"><LocateFixed size={17} /></span>
-            <span><small>Borrowing around</small><strong>{location ? "Your nearby area" : "Set your location"}</strong></span>
+            <span><small>Borrowing around</small><strong>{location ? (locationLabel || "Current location") : "Set your location"}</strong></span>
             <ChevronRight size={17} />
           </button>
           <div className="marketplace-top-actions">
@@ -1221,7 +1250,7 @@ function App() {
             <div className="hero-copy">
               <div className="eyebrow">
                 <span className="eyebrow-dot" />
-                YOUR NEIGHBORHOOD, SHARED
+                YOUR NEIGHBOURHOOD, SHARED
               </div>
 
               <h1>
@@ -1522,7 +1551,7 @@ function App() {
           <div className="section-heading needs-discovery-heading">
             <div>
               <div className="section-eyebrow">PEOPLE AROUND YOU</div>
-              <h2>What neighbors are looking for</h2>
+              <h2>What neighbours are looking for</h2>
             </div>
             <div className="results-count">{nearbyNeeds.length} open needs</div>
           </div>
@@ -1681,7 +1710,7 @@ function App() {
 
               <div>
                 <strong>
-                  Powered by neighbors
+                  Powered by neighbours
                 </strong>
 
                 <span>
@@ -1700,6 +1729,7 @@ function App() {
           mode={authMode}
           setMode={setAuthMode}
           onClose={() => setAuthOpen(false)}
+          onInstall={promptInstallApp}
           onAdminSuccess={() => {
             setAuthOpen(false);
             setAdminOpen(true);
@@ -1824,8 +1854,8 @@ function App() {
             setDashboardOpen(true);
           }}
           onRequestLocation={requestLocation}
-          onInstall={promptInstallApp}
-          installAvailable={Boolean(installPromptEvent)}
+          locationLabel={locationLabel}
+          locationMessage={locationMessage}
         />
       )}
 
@@ -1898,8 +1928,6 @@ function App() {
           favoriteIds={favoriteIds}
           blockedUserIds={blockedUserIds}
           waitlistedIds={waitlistedIds}
-          installAvailable={Boolean(installPromptEvent)}
-          onInstall={promptInstallApp}
           onClose={() => setDashboardOpen(false)}
           onOpenItem={handleItemClick}
           onRequest={handleRequestClick}
@@ -2363,7 +2391,7 @@ function NeedModal({ onClose, onSuccess }) {
         <button className="modal-close" onClick={onClose} type="button"><X size={20} /></button>
         <div className="modal-icon"><Search size={24} /></div>
         <div className="request-item-label">POST A NEED</div>
-        <h2>Tell your neighborhood what you need.</h2>
+        <h2>Tell your neighbourhood what you need.</h2>
         <p className="modal-subtitle">A nearby owner can offer a matching item. Your exact location is never shown publicly.</p>
 
         <form onSubmit={handleSubmit}>
@@ -2621,8 +2649,8 @@ function ProfileModal({
   onLogout,
   onDashboard,
   onRequestLocation,
-  onInstall,
-  installAvailable,
+  locationLabel,
+  locationMessage,
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile?.name || "");
@@ -2773,7 +2801,7 @@ function ProfileModal({
             <div className="modal-kicker">YOUR PROFILE</div>
             <h2>{displayName}</h2>
             <p className="modal-subtitle">
-              Manage how your neighbors see you on HaveIt.
+              Manage how your neighbours see you on HaveIt.
             </p>
           </div>
         </div>
@@ -2888,9 +2916,9 @@ function ProfileModal({
                 <span>Contact number</span>
                 <strong>{profile?.phone_number || "Not added"}</strong>
               </div>
-              <div className="profile-detail-row">
-                <span>Nearby results</span>
-                <strong>{hasLocation ? "Location enabled" : "Location not set"}</strong>
+              <div className="profile-detail-row profile-location-detail">
+                <span>Current location</span>
+                <strong>{hasLocation ? (locationLabel || "Current location") : "Not set"}</strong>
               </div>
             </div>
 
@@ -2922,11 +2950,14 @@ function ProfileModal({
                 <LayoutDashboard size={16} />
                 Dashboard
               </button>
-              <button type="button" className="secondary-button" onClick={onInstall}>
-                <Download size={16} />
-                {installAvailable ? "Install HaveIt" : "Install help"}
-              </button>
             </div>
+
+            {locationMessage && (
+              <div className="profile-location-message">
+                <MapPin size={15} />
+                <span>{locationMessage}</span>
+              </div>
+            )}
 
             <button
               type="button"
@@ -3678,7 +3709,7 @@ function ReviewModal({ request, session, onClose, onSuccess }) {
         <div className="modal-icon"><Star size={25} /></div>
         <div className="request-item-label">AFTER BORROWING</div>
         <h2>How did it go?</h2>
-        <p className="modal-subtitle">Your review helps the next neighbor decide who they can trust.</p>
+        <p className="modal-subtitle">Your review helps the next neighbour decide who they can trust.</p>
 
         <form onSubmit={submitReview}>
           <div className="star-rating" aria-label="Rating">
@@ -4059,6 +4090,7 @@ function AuthModal({
   onClose,
   onSuccess,
   onAdminSuccess,
+  onInstall,
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] =
@@ -4144,14 +4176,6 @@ function AuthModal({
           <X size={20} />
         </button>
 
-        <div className="auth-brand-lockup">
-          <img
-            src="/haveit-logo-full.png"
-            alt="HaveIt — Trust, Share, Use"
-            className="auth-brand-logo"
-          />
-        </div>
-
         <div className="modal-icon">
           {mode === "login"
             ? "👋"
@@ -4171,7 +4195,7 @@ function AuthModal({
             ? "Secure sign in for authorised HaveIt administrators."
             : mode === "login"
             ? "Log in to borrow and lend items nearby."
-            : "Create an account and start sharing with your neighborhood."}
+            : "Create an account and start sharing with your neighbourhood."}
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -4263,17 +4287,27 @@ function AuthModal({
         </div>
 
         {mode === "login" && (
-          <button
-            type="button"
-            className="auth-admin-link"
-            onClick={() => {
-              setAdminMode((current) => !current);
-              setErrorMessage("");
-            }}
-          >
-            <ShieldAlert size={14} />
-            {adminMode ? "Back to normal login" : "Admin access"}
-          </button>
+          <div className="auth-extra-actions">
+            <button
+              type="button"
+              className="auth-install-button"
+              onClick={onInstall}
+            >
+              <Download size={14} />
+              Install HaveIt
+            </button>
+            <button
+              type="button"
+              className="auth-admin-link"
+              onClick={() => {
+                setAdminMode((current) => !current);
+                setErrorMessage("");
+              }}
+            >
+              <ShieldAlert size={14} />
+              {adminMode ? "Back to normal login" : "Admin access"}
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -4443,7 +4477,7 @@ function AddItemModal({ location, onClose, onSuccess }) {
         <button className="modal-close" onClick={onClose} type="button"><X size={20} /></button>
         <div className="modal-icon"><PackagePlus size={26} /></div>
         <h2>List an item</h2>
-        <p className="modal-subtitle">Make something useful available to your neighborhood.</p>
+        <p className="modal-subtitle">Make something useful available to your neighbourhood.</p>
 
         <form onSubmit={handleSubmit}>
           <label>Item name<input type="text" placeholder="e.g. Cordless drill" value={name} onChange={(event) => setName(event.target.value)} required /></label>
@@ -4527,7 +4561,7 @@ function NotificationPopover({ notifications, unreadCount, onClose, onMarkRead, 
   );
 }
 
-function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, waitlistedIds, installAvailable, onInstall, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
+function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, waitlistedIds, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
   const [tab, setTab] = useState("overview");
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [activity, setActivity] = useState([]);
@@ -4591,7 +4625,7 @@ function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, 
       <div className="dashboard-modal">
         <button className="modal-close" onClick={onClose} type="button"><X size={19} /></button>
         <div className="dashboard-header">
-          <div><div className="details-eyebrow">YOUR HAVEIT</div><h2>Dashboard</h2><p>Everything you lend, borrow, save and manage in one place.</p></div>
+          <div className="dashboard-title-block"><div className="details-eyebrow">YOUR HAVEIT</div><h2>Dashboard</h2><p>Everything you lend, borrow, save and manage in one place.</p></div>
           <div className="dashboard-profile-mini"><div className="dashboard-avatar">{profile?.avatar_url ? <img src={profile.avatar_url} alt="" /> : (profile?.name || "U").charAt(0).toUpperCase()}</div><div><strong>{profile?.name || "HaveIt member"}</strong><span>{profile?.reliability_score ? `${Number(profile.reliability_score).toFixed(1)} reliability` : "New member"}</span></div></div>
         </div>
 
@@ -4617,7 +4651,6 @@ function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, 
               <button type="button" onClick={() => setTab("items")}><PackagePlus size={18} /><strong>Manage my items</strong><span>Edit availability and photos.</span></button>
               <button type="button" onClick={() => setTab("saved")}><Heart size={18} /><strong>Saved items</strong><span>{savedItems.length} available right now.</span></button>
               <button type="button" onClick={() => setTab("history")}><History size={18} /><strong>Transaction history</strong><span>Completed, cancelled and past borrows.</span></button>
-              <button type="button" onClick={onInstall}><Download size={18} /><strong>{installAvailable ? "Install HaveIt" : "Phone install help"}</strong><span>Add HaveIt to your home screen.</span></button>
             </div>
           </div>
         )}
