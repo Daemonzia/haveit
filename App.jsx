@@ -4210,16 +4210,62 @@ function AddItemModal({ location, onClose, onSuccess }) {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
+  const [preparingImage, setPreparingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  function handleFileChange(event) {
-    const file = event.target.files?.[0];
+  async function handleFileChange(event) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
     if (!file) return;
-    if (!file.type.startsWith("image/")) return setErrorMessage("Please choose an image file.");
-    if (file.size > 5 * 1024 * 1024) return setErrorMessage("Image must be 5 MB or smaller.");
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMessage("Please choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage("Image must be 5 MB or smaller.");
+      return;
+    }
+
     setErrorMessage("");
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setPreparingImage(true);
+
+    try {
+      // Android Chrome/PWA can revoke the original picker File reference
+      // after the file chooser closes. Copy the bytes immediately while the
+      // reference is fresh, then keep only an in-memory File for later upload.
+      const sourceBuffer = await file.arrayBuffer();
+      const stableFile = new File([sourceBuffer], file.name || "haveit-image", {
+        type: file.type || "image/jpeg",
+        lastModified: Date.now(),
+      });
+
+      // Normalize now, not when the user eventually taps List item. This means
+      // the submit step never touches the Android picker File again.
+      const preparedFile = await prepareImageForUpload(stableFile);
+      const previewUrl = URL.createObjectURL(preparedFile);
+
+      setImageFile(preparedFile);
+      setImagePreview((previous) => {
+        if (previous) URL.revokeObjectURL(previous);
+        return previewUrl;
+      });
+    } catch (error) {
+      console.error("Image selection/read error:", error);
+      setImageFile(null);
+      setImagePreview((previous) => {
+        if (previous) URL.revokeObjectURL(previous);
+        return "";
+      });
+      setErrorMessage(
+        error?.name === "NotReadableError"
+          ? "Your phone did not grant the browser a readable copy of that photo. Please choose the photo again from Gallery/Photos."
+          : error?.message || "Could not prepare that photo. Please choose another image."
+      );
+    } finally {
+      setPreparingImage(false);
+    }
   }
 
   async function handleSubmit(event) {
@@ -4240,7 +4286,9 @@ function AddItemModal({ location, onClose, onSuccess }) {
     let imageUrl = null;
     if (imageFile) {
       try {
-        const uploadFile = await prepareImageForUpload(imageFile);
+        // imageFile is already a memory-backed, normalized File prepared when
+        // the user selected the photo. Do not re-read the Android picker file.
+        const uploadFile = imageFile;
         const filePath = `${currentSession.user.id}/items/${crypto.randomUUID()}.jpg`;
         const uploadBody = await uploadFile.arrayBuffer();
         const { error: uploadError } = await supabase.storage
@@ -4350,7 +4398,9 @@ function AddItemModal({ location, onClose, onSuccess }) {
 
           <div className="location-notice"><MapPin size={16} />{location ? "Approximate distance will be calculated from your saved location." : "Location isn't enabled. The item can still be listed."}</div>
           {errorMessage && <div className="form-error">{errorMessage}</div>}
-          <button className="modal-submit" type="submit" disabled={loading}>{loading ? "Listing..." : "List item"}</button>
+          <button className="modal-submit" type="submit" disabled={loading || preparingImage}>{
+            preparingImage ? "Preparing photo..." : loading ? "Listing..." : "List item"
+          }</button>
         </form>
       </div>
     </div>
