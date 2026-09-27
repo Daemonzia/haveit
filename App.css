@@ -6266,3 +6266,555 @@ textarea:focus-visible {
   }
 }
 
+
+/* =========================================================
+   HAVEIT MARKETPLACE UI — dense Amazon/Flipkart-style polish
+   ========================================================= */
+:root {
+  --market-green: #0f6b3f;
+  --market-green-dark: #0b4f30;
+  --market-ink: #17251d;
+  --market-muted: #66736b;
+  --market-border: #e1e7e2;
+  --market-bg: #f6f8f6;
+  --market-card: #ffffff;
+  --market-shadow: 0 8px 26px rgba(18, 45, 29, .07);
+}
+
+body {
+  background: var(--market-bg);
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(22, 105, 62, .045), transparent 28rem),
+    var(--market-bg);
+}
+
+.navbar {
+  box-shadow: 0 1px 0 rgba(20, 42, 28, .08);
+  backdrop-filter: blur(16px);
+}
+
+.nav-inner,
+.hero-inner,
+.search-container,
+.items-section,
+.needs-discovery-section,
+.recommendation-section,
+.match-section,
+.trust-section {
+  max-width: 1380px;
+}
+
+/* Compact hero: useful but not allowed to dominate the catalogue. */
+.hero-section {
+  padding: 34px 20px 18px;
+}
+
+.hero-inner {
+  min-height: 300px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(330px, .78fr);
+  gap: 26px;
+  align-items: center;
+}
+
+.hero-copy h1 {
+  max-width: 720px;
+  font-size: clamp(36px, 4.1vw, 58px);
+  line-height: .98;
+  letter-spacing: -.055em;
+  margin: 10px 0 14px;
+}
+
+.hero-copy p {
+  max-width: 600px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.hero-card {
+  border-radius: 18px;
+  box-shadow: var(--market-shadow);
+  padding: 16px;
+}
+
+.hero-item-preview {
+  padding: 9px 0;
+}
+
+.search-section {
+  position: relative;
+  z-index: 20;
+  padding: 4px 20px 18px;
+}
+
+.search-container {
+  background: rgba(255,255,255,.94);
+  border: 1px solid var(--market-border);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 6px 24px rgba(18,45,29,.055);
+}
+
+.search-box {
+  min-height: 50px;
+  border-radius: 12px;
+  border: 1px solid #d5ddd7;
+  box-shadow: none;
+}
+
+.search-box:focus-within {
+  border-color: rgba(15,107,63,.5);
+  box-shadow: 0 0 0 3px rgba(15,107,63,.08);
+}
+
+.filter-row,
+.advanced-filter-row {
+  margin-top: 10px;
+}
+
+.category-filters {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 1px 0 3px;
+  scrollbar-width: none;
+}
+
+.category-filters::-webkit-scrollbar { display: none; }
+
+.category-chip {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #e0e6e1;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.category-chip.active {
+  background: #eaf5ed;
+  border-color: #9bc6a8;
+  color: var(--market-green-dark);
+}
+
+.advanced-filter-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px;
+}
+
+.filter-field {
+  min-height: 38px;
+  border: 1px solid #e2e7e3;
+  border-radius: 10px;
+  background: #fbfcfb;
+}
+
+.marketplace-shortcuts {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 9px 0 1px;
+  scrollbar-width: none;
+}
+
+.marketplace-shortcuts::-webkit-scrollbar { display: none; }
+
+.marketplace-shortcuts button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid #e0e6e1;
+  border-radius: 9px;
+  background: #fff;
+  color: #304238;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.marketplace-shortcuts button:hover {
+  border-color: #a8c8b1;
+  color: var(--market-green-dark);
+  background: #f4faf5;
+}
+
+.availability-filter-row {
+  margin-top: 10px;
+}
+
+/* Catalogue density — the major UX change requested. */
+.items-section,
+.needs-discovery-section,
+.recommendation-section,
+.match-section,
+.trust-section {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.items-section {
+  padding-top: 18px;
+}
+
+.section-heading {
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: -.035em;
+}
+
+.items-grid,
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.compact-market-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e3e8e4;
+  border-radius: 14px;
+  background: var(--market-card);
+  box-shadow: 0 5px 18px rgba(17, 43, 28, .055);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.compact-market-card:hover {
+  transform: translateY(-2px);
+  border-color: #cad8ce;
+  box-shadow: 0 12px 28px rgba(17, 43, 28, .09);
+}
+
+.compact-card-media-wrap {
+  position: relative;
+}
+
+.compact-card-media-wrap .item-card-click {
+  display: block;
+  width: 100%;
+}
+
+.compact-market-card .item-image {
+  height: auto;
+  aspect-ratio: 1.18 / 1;
+  border-radius: 0;
+}
+
+.compact-market-card .item-image img,
+.compact-market-card .item-placeholder {
+  width: 100%;
+  height: 100%;
+}
+
+.compact-market-card .item-category {
+  left: 9px;
+  bottom: 9px;
+  font-size: 9px;
+  padding: 4px 7px;
+}
+
+.compact-market-card .item-free-pill,
+.compact-market-card .item-paid-pill {
+  right: 9px;
+  bottom: 9px;
+  font-size: 9px;
+  padding: 4px 7px;
+}
+
+.compact-market-card .favorite-floating-button {
+  z-index: 4;
+  top: 9px;
+  right: 9px;
+  width: 31px;
+  height: 31px;
+  border: 1px solid rgba(255,255,255,.85);
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.compact-item-content {
+  padding: 10px 11px 9px;
+}
+
+.compact-item-open {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+
+.compact-market-card .item-title-row {
+  gap: 7px;
+  align-items: flex-start;
+}
+
+.compact-market-card .item-title-row h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--market-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.compact-market-card .availability-badge-inline {
+  flex: 0 0 auto;
+  font-size: 8px;
+  padding-top: 2px;
+}
+
+.compact-item-subline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  color: #6b776f;
+  font-size: 10px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.compact-item-subline span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compact-item-bottom {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid #eef1ef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.compact-item-bottom .item-owner-caption {
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.compact-item-bottom .item-bottom-actions {
+  gap: 5px;
+}
+
+.compact-item-bottom .tiny-icon-button {
+  width: 29px;
+  height: 29px;
+}
+
+.compact-item-bottom .request-button {
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+
+/* Keep maps and secondary sections visually subordinate to the catalogue. */
+.nearby-map-card,
+.needs-discovery-section,
+.recommendation-section,
+.match-section,
+.trust-section {
+  margin-top: 24px;
+}
+
+.needs-discovery-grid,
+.match-grid {
+  gap: 10px;
+}
+
+.need-discovery-card,
+.match-card,
+.trust-card {
+  border-radius: 13px;
+}
+
+/* Modals feel like modern commerce sheets rather than oversized dialogs. */
+.modal-backdrop {
+  padding: 18px;
+}
+
+.modal,
+.item-details-modal,
+.requests-modal,
+.dashboard-modal,
+.admin-modal {
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(10, 28, 17, .20);
+}
+
+.details-image {
+  max-height: 330px;
+}
+
+.details-image img {
+  object-fit: contain;
+}
+
+/* Dense desktop navigation. */
+.nav-actions {
+  gap: 6px;
+}
+
+.nav-actions > button {
+  min-height: 36px;
+  border-radius: 9px;
+}
+
+/* Mobile: two-column catalogue, small controls, no giant cards. */
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .hero-card { display: none; }
+  .hero-section { padding-top: 24px; }
+
+  .advanced-filter-row {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .items-grid,
+  .recommendation-grid {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+
+  .hero-section { padding: 20px 12px 12px; }
+  .hero-copy h1 { font-size: 34px; }
+  .hero-copy p { font-size: 13px; }
+
+  .search-section { padding: 4px 10px 12px; }
+  .search-container { padding: 9px; border-radius: 14px; }
+  .search-box { min-height: 46px; }
+
+  .advanced-filter-row { gap: 6px; }
+  .filter-field { min-height: 36px; }
+  .filter-field select { font-size: 10px; }
+
+  .marketplace-shortcuts { margin: 1px -1px 0; }
+  .marketplace-shortcuts button { min-height: 32px; font-size: 10px; padding: 0 10px; }
+
+  .items-section,
+  .needs-discovery-section,
+  .recommendation-section,
+  .match-section,
+  .trust-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .section-heading { gap: 8px; }
+  .section-heading h2 { font-size: 21px; }
+
+  .items-grid,
+  .recommendation-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 9px;
+  }
+
+  .compact-market-card { border-radius: 12px; }
+  .compact-market-card .item-image { aspect-ratio: 1.08 / 1; }
+  .compact-item-content { padding: 8px 8px 8px; }
+  .compact-market-card .item-title-row h3 { font-size: 12px; }
+  .compact-market-card .availability-badge-inline { display: none; }
+  .compact-item-subline { font-size: 9px; margin-top: 5px; }
+  .compact-item-bottom { margin-top: 7px; padding-top: 7px; }
+  .compact-item-bottom .item-owner-caption { display: none; }
+  .compact-item-bottom { justify-content: flex-end; }
+  .compact-item-bottom .item-bottom-actions { width: 100%; }
+  .compact-item-bottom .request-button { flex: 1; justify-content: center; }
+
+  .items-heading-actions { gap: 6px; }
+  .results-count { font-size: 10px; }
+  .view-toggle { max-width: 180px; }
+
+  .mobile-bottom-nav.marketplace-bottom-nav {
+    width: 100vw !important;
+    height: calc(64px + env(safe-area-inset-bottom)) !important;
+    padding: 4px 5px calc(4px + env(safe-area-inset-bottom)) !important;
+    grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+    gap: 2px !important;
+    border-radius: 16px 16px 0 0 !important;
+    background: rgba(255,255,255,.97) !important;
+    box-shadow: 0 -7px 24px rgba(16, 43, 27, .09) !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav > button {
+    min-width: 0 !important;
+    min-height: 54px !important;
+    padding: 5px 2px !important;
+    border-radius: 10px !important;
+    font-size: 9px !important;
+    font-weight: 750 !important;
+    gap: 3px !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add {
+    overflow: visible !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add-icon {
+    width: 38px !important;
+    height: 38px !important;
+    margin-top: -15px !important;
+    border: 4px solid #f6f8f6 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 6px 16px rgba(15,107,63,.20) !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add > span:last-child {
+    margin-top: -1px;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-with-badge b {
+    top: 3px !important;
+    right: 17% !important;
+    min-width: 15px !important;
+    height: 15px !important;
+    font-size: 8px !important;
+  }
+
+  .modal-backdrop { padding: 8px; align-items: flex-end; }
+  .modal,
+  .item-details-modal,
+  .requests-modal,
+  .dashboard-modal,
+  .admin-modal {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 14px 14px;
+  }
+
+  .details-image { max-height: 250px; }
+}
+
+@media (max-width: 380px) {
+  .items-grid,
+  .recommendation-grid { gap: 7px; }
+  .compact-item-content { padding-left: 7px; padding-right: 7px; }
+  .compact-market-card .item-title-row h3 { font-size: 11.5px; }
+  .compact-item-bottom .request-button { font-size: 9px; padding-left: 7px; padding-right: 7px; }
+}
