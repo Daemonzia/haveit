@@ -81,16 +81,16 @@ img {
 }
 
 .brand-mark {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  object-fit: contain;
-  display: block;
-}
-
-.brand-logo-image {
-  border-radius: 0;
-  background: transparent;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #1e3327;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
 }
 
 .brand-name {
@@ -8169,58 +8169,129 @@ body {
 }
 
 
-/* HaveIt identity refresh — handshake H logo */
-.brand-logo-image {
-  width: 42px !important;
-  height: 42px !important;
-  min-width: 42px;
-  padding: 0;
-  border-radius: 0 !important;
-  background: transparent !important;
-  object-fit: contain;
+/* =========================================================
+   HAVEIT UI FIXES — PROFILE / INSTALL / LOCATION / DASHBOARD
+   ========================================================= */
+
+/* Install belongs to the login entry point only. */
+.auth-extra-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
 }
 
-.brand-name {
-  letter-spacing: -0.65px;
-  font-weight: 850;
-  background: linear-gradient(100deg, #073f36 0%, #0b5f4e 58%, #19c889 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.brand-tagline {
-  color: #6d7d74;
-  letter-spacing: 0.02em;
-}
-
-.auth-brand-lockup {
-  display: flex;
+.auth-install-button,
+.auth-admin-link {
+  width: 100%;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  margin: 2px auto 4px;
+  gap: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 850;
+  transition: .16s ease;
 }
 
-.auth-brand-logo {
-  width: min(210px, 68vw);
-  height: auto;
-  max-height: 170px;
-  object-fit: contain;
-  display: block;
+.auth-install-button {
+  border: 1px solid #cfe0d2;
+  background: #edf7ef;
+  color: #245b35;
 }
 
-@media (max-width: 430px) {
-  .brand-logo-image {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px;
+.auth-install-button:hover { background: #e4f2e6; transform: translateY(-1px); }
+.auth-install-button:active { transform: translateY(0); }
+
+.auth-extra-actions .auth-admin-link {
+  margin-top: 0;
+  border: 1px solid #e1e8e2;
+  background: #fff;
+  color: #59675d;
+}
+
+/* The current location is a result, not just a toggle. */
+.profile-location-detail strong {
+  color: #245b35 !important;
+  max-width: 70% !important;
+}
+
+.profile-location-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #d8e8da;
+  border-radius: 12px;
+  background: #eef8ef;
+  color: #396347;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.profile-location-message svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* Make Dashboard unmistakably readable on every background. */
+.dashboard-title-block {
+  min-width: 0;
+}
+
+.dashboard-header h2 {
+  color: #183a27 !important;
+  font-weight: 850 !important;
+  line-height: 1.05 !important;
+  text-shadow: none !important;
+}
+
+.dashboard-header .details-eyebrow {
+  color: #4d7258 !important;
+  font-weight: 850 !important;
+}
+
+.dashboard-header p {
+  color: #66736a !important;
+  line-height: 1.45;
+}
+
+/* Bottom-nav List label must remain readable beneath the floating + button. */
+.mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add > span:last-child {
+  color: #59675e !important;
+  font-weight: 800 !important;
+}
+
+/* Keep empty discovery states compact and readable. */
+.needs-discovery-empty {
+  min-height: 104px !important;
+  padding: 18px 24px !important;
+  line-height: 1.5 !important;
+}
+
+@media (max-width: 700px) {
+  .marketplace-location strong {
+    max-width: 185px !important;
+    font-size: 13px !important;
   }
 
-  .brand-name {
-    font-size: 17px;
+  .profile-location-detail strong {
+    max-width: 61% !important;
+    white-space: normal !important;
+    text-align: right;
+    line-height: 1.25;
   }
 
-  .auth-brand-logo {
-    width: 180px;
-    max-height: 145px;
+  .profile-location-message {
+    font-size: 10px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 27px !important;
+    color: #183a27 !important;
+  }
+
+  .dashboard-header .details-eyebrow {
+    color: #477052 !important;
   }
 }
