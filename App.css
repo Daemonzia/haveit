@@ -8295,3 +8295,148 @@ body {
     color: #477052 !important;
   }
 }
+
+/* ===== Final polish: logo, reports and desktop-friendly dates ===== */
+.brand-mark {
+  background: #eaf5ec !important;
+  overflow: hidden;
+  padding: 3px;
+}
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.report-modal form {
+  padding-bottom: 4px;
+}
+.report-submit-area {
+  display: grid;
+  gap: 7px;
+  margin-top: 2px;
+  position: sticky;
+  bottom: -1px;
+  padding-top: 10px;
+  background: #fff;
+}
+.report-submit-area .modal-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  font-size: 14px;
+}
+.report-submit-area > span {
+  text-align: center;
+  color: #8a948c;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.friendly-date-field {
+  min-width: 0;
+}
+.friendly-date-control {
+  position: relative;
+}
+.friendly-date-control input[type="date"] {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid #d8e2d8;
+  border-radius: 11px;
+  background: #fff;
+  color: #304238;
+  color-scheme: light;
+  font-size: 14px;
+  font-weight: 700;
+}
+.friendly-date-control input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 20px;
+  height: 20px;
+  opacity: .7;
+  cursor: pointer;
+}
+.date-quick-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 7px;
+  flex-wrap: wrap;
+}
+.date-quick-actions button {
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid #d9e5da;
+  border-radius: 999px;
+  background: #f7fbf7;
+  color: #3e6b49;
+  font-size: 9px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.date-quick-actions button:hover {
+  background: #eaf5ec;
+  border-color: #bcd3bf;
+}
+.borrow-date-card,
+.need-date-card {
+  align-items: start !important;
+}
+
+@media (min-width: 701px) {
+  .borrow-date-card,
+  .need-date-card {
+    gap: 16px;
+    padding: 16px;
+  }
+  .friendly-date-control input[type="date"] {
+    height: 48px;
+    font-size: 14px;
+  }
+  .date-quick-actions button {
+    min-height: 32px;
+    padding: 0 11px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .brand-mark {
+    padding: 2px;
+  }
+  .report-submit-area {
+    position: static;
+  }
+  .date-quick-actions {
+    gap: 5px;
+  }
+  .date-quick-actions button {
+    min-height: 28px;
+    padding: 0 8px;
+  }
+}
+
+.item-report-button {
+  min-height: 34px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #e0e6e0;
+  border-radius: 9px;
+  background: #fff;
+  color: #69756d;
+  font-size: 9px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.item-report-button:hover {
+  border-color: #d5aaa4;
+  background: #fff8f7;
+  color: #92584f;
+}
