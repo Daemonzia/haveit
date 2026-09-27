@@ -47,6 +47,15 @@ import {
   Download,
   ShieldAlert,
   RefreshCw,
+  ChevronRight,
+  Mic,
+  ScanLine,
+  LocateFixed,
+  Clock4,
+  Bookmark,
+  Share2,
+  SearchCheck,
+  Home as HomeIcon,
 } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import "./App.css";
@@ -247,6 +256,13 @@ function App() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [recentSearches, setRecentSearches] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("haveit_recent_searches") || "[]").slice(0, 6); } catch { return []; }
+  });
+  const [recentItemIds, setRecentItemIds] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("haveit_recent_items") || "[]").slice(0, 8); } catch { return []; }
+  });
   const [selectedCategory, setSelectedCategory] =
     useState("All");
 
@@ -871,6 +887,7 @@ function App() {
   }
 
   function handleItemClick(item) {
+    rememberItem(item.id);
     setSelectedItem(item);
   }
 
@@ -1013,6 +1030,42 @@ function App() {
     return pairs.slice(0, 6);
   }, [nearbyNeeds, items, blockedUserIds, session]);
 
+  function rememberSearch(value) {
+    const cleaned = String(value || "").trim();
+    if (!cleaned) return;
+    const next = [cleaned, ...recentSearches.filter((entry) => entry.toLowerCase() !== cleaned.toLowerCase())].slice(0, 6);
+    setRecentSearches(next);
+    try { localStorage.setItem("haveit_recent_searches", JSON.stringify(next)); } catch {}
+  }
+
+  function rememberItem(itemId) {
+    if (!itemId) return;
+    const next = [itemId, ...recentItemIds.filter((id) => id !== itemId)].slice(0, 8);
+    setRecentItemIds(next);
+    try { localStorage.setItem("haveit_recent_items", JSON.stringify(next)); } catch {}
+  }
+
+  function submitSearch() {
+    rememberSearch(searchQuery);
+    setSearchFocused(false);
+    document.querySelector(".items-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleCategorySelect(category) {
+    setSelectedCategory(category);
+    document.querySelector(".items-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function shareHaveIt() {
+    const shareData = { title: "HaveIt", text: "Borrow useful things from people nearby.", url: window.location.href };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else await navigator.clipboard.writeText(window.location.href);
+      setSuccessMessage("HaveIt link ready to share.");
+      setTimeout(() => setSuccessMessage(""), 2500);
+    } catch {}
+  }
+
   function clearFilters() {
     setSearchQuery("");
     setSelectedCategory("All");
@@ -1116,6 +1169,52 @@ function App() {
           </div>
         </div>
       </header>
+
+      <section className="marketplace-home-shell">
+        <div className="marketplace-topline">
+          <button type="button" className="marketplace-location" onClick={requestLocation}>
+            <span className="marketplace-location-icon"><LocateFixed size={17} /></span>
+            <span><small>Borrowing around</small><strong>{location ? "Your nearby area" : "Set your location"}</strong></span>
+            <ChevronRight size={17} />
+          </button>
+          <div className="marketplace-top-actions">
+            {session && <button type="button" onClick={() => setNotificationOpen((current) => !current)} aria-label="Notifications"><Bell size={18} />{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>}
+            <button type="button" onClick={shareHaveIt} aria-label="Share HaveIt"><Share2 size={18} /></button>
+          </div>
+        </div>
+
+        <div className="marketplace-search-wrap">
+          <div className={`marketplace-search-box ${searchFocused ? "is-focused" : ""}`}>
+            <Search size={21} />
+            <input type="search" placeholder="Search laptops, drills, cameras, books..." value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} onFocus={() => setSearchFocused(true)} onKeyDown={(event) => { if (event.key === "Enter") submitSearch(); if (event.key === "Escape") setSearchFocused(false); }} aria-label="Search items to borrow" />
+            {searchQuery && <button type="button" onClick={() => setSearchQuery("")} aria-label="Clear search"><X size={17} /></button>}
+            <button type="button" className="voice-search-button" onClick={() => setSuccessMessage("Voice search can be connected when microphone access is enabled.")} aria-label="Voice search"><Mic size={19} /></button>
+            <button type="button" className="scan-search-button" onClick={() => setSuccessMessage("Visual search can be connected to your camera next.")} aria-label="Visual search"><ScanLine size={20} /></button>
+          </div>
+          {searchFocused && (
+            <div className="search-suggestion-panel">
+              <div className="search-suggestion-head"><strong>{searchQuery ? "Popular nearby matches" : "Quick search"}</strong><span>Fast discovery</span></div>
+              {!searchQuery && recentSearches.length > 0 && <div className="search-history-row"><Clock4 size={14} />{recentSearches.map((term) => <button key={term} type="button" onClick={() => { setSearchQuery(term); rememberSearch(term); setSearchFocused(false); }}>{term}</button>)}</div>}
+              <div className="search-suggestion-chips">{["Laptop", "Drill", "Camera", "Projector", "Camping", "Party speaker"].map((term) => <button key={term} type="button" onClick={() => { setSearchQuery(term); rememberSearch(term); setSearchFocused(false); }}>{term}</button>)}</div>
+            </div>
+          )}
+        </div>
+
+        <div className="marketplace-category-rail" aria-label="Browse categories">
+          {categories.map((category) => (
+            <button key={category} type="button" className={selectedCategory === category ? "active" : ""} onClick={() => handleCategorySelect(category)}>
+              <span className="marketplace-category-icon">{category === "All" ? "✨" : getCategoryIcon(category)}</span><span>{category}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="marketplace-quick-actions">
+          <button type="button" onClick={openListItem}><span><Plus size={19} /></span><div><strong>List an item</strong><small>Share & build trust</small></div><ChevronRight size={16} /></button>
+          <button type="button" onClick={openNeed}><span><Search size={18} /></span><div><strong>Post a need</strong><small>Let owners find you</small></div><ChevronRight size={16} /></button>
+          <button type="button" onClick={() => setDashboardOpen(true)}><span><Bookmark size={18} /></span><div><strong>Saved items</strong><small>{favoriteIds.length} saved</small></div><ChevronRight size={16} /></button>
+          <button type="button" onClick={openRequests}><span><Inbox size={18} /></span><div><strong>My activity</strong><small>Requests & returns</small></div><ChevronRight size={16} /></button>
+        </div>
+      </section>
 
       <main>
         <section className="hero-section">
@@ -1402,6 +1501,23 @@ function App() {
             </div>
           )}
         </section>
+
+        {recentItemIds.length > 0 && (
+          <section className="recently-viewed-section">
+            <div className="section-heading">
+              <div><div className="section-eyebrow">PICK UP WHERE YOU LEFT OFF</div><h2>Recently viewed</h2></div>
+              <button type="button" className="section-link-button" onClick={() => { setRecentItemIds([]); try { localStorage.removeItem("haveit_recent_items"); } catch {} }}>Clear</button>
+            </div>
+            <div className="recently-viewed-rail">
+              {recentItemIds.map((id) => items.find((item) => item.id === id)).filter(Boolean).map((item) => (
+                <button type="button" className="recent-view-card" key={item.id} onClick={() => handleItemClick(item)}>
+                  <div className="recent-view-image">{item.image_url ? <img src={item.image_url} alt="" loading="lazy" /> : getCategoryIcon(item.category)}</div>
+                  <div><strong>{item.name}</strong><span>{item.lending_type === "paid" && item.price_per_day ? `₹${item.price_per_day}/day` : "Free"}</span></div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="needs-discovery-section">
           <div className="section-heading needs-discovery-heading">
@@ -1849,7 +1965,7 @@ function App() {
 
       {session && (
         <nav className="mobile-bottom-nav marketplace-bottom-nav" aria-label="Mobile navigation">
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><Search size={17} /><span>Home</span></button>
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><HomeIcon size={17} /><span>Home</span></button>
           <button type="button" onClick={() => setDashboardOpen(true)}><Heart size={17} /><span>Saved</span></button>
           <button type="button" className="mobile-nav-add" onClick={openListItem} aria-label="List an item"><span className="mobile-nav-add-icon"><Plus size={20} /></span><span>List</span></button>
           <button type="button" onClick={openRequests} className="mobile-nav-with-badge"><Inbox size={17} /><span>Requests</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>
