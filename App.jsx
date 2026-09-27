@@ -25,6 +25,7 @@ import {
   Mail,
   KeyRound,
   RotateCcw,
+  Repeat2,
   Star,
   Handshake,
   CreditCard,
@@ -1306,6 +1307,13 @@ function App() {
               </div>
             </div>
 
+            <div className="marketplace-shortcuts" aria-label="HaveIt shortcuts">
+              <button type="button" onClick={openNeed}><Search size={15} /><span>Post a Need</span></button>
+              <button type="button" onClick={openRequests}><Inbox size={15} /><span>My requests</span></button>
+              <button type="button" onClick={() => setDashboardOpen(true)}><Heart size={15} /><span>Saved items</span></button>
+              <button type="button" onClick={openListItem}><Plus size={15} /><span>List an item</span></button>
+            </div>
+
             <div className="availability-filter-row">
               <div className="date-filter-label"><CalendarClock size={15} /> Need it from</div>
               <input type="date" min={getTodayString()} value={searchStartDate} onChange={(event) => { const next = event.target.value; setSearchStartDate(next); if (searchEndDate && next > searchEndDate) setSearchEndDate(next); }} />
@@ -1838,24 +1846,12 @@ function App() {
       {installHelpOpen && <InstallHelpModal onClose={() => setInstallHelpOpen(false)} onTryInstall={promptInstallApp} />}
 
       {session && (
-        <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <Search size={18} />
-            <span>Browse</span>
-          </button>
-          <button type="button" onClick={openRequests} className="mobile-nav-with-badge">
-            <Inbox size={18} />
-            <span>Requests</span>
-            {unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}
-          </button>
-          <button type="button" className="mobile-nav-add" onClick={openListItem} aria-label="List an item">
-            <span className="mobile-nav-add-icon"><Plus size={22} /></span>
-            <span>List</span>
-          </button>
-          <button type="button" onClick={openProfile}>
-            <UserRound size={18} />
-            <span>Profile</span>
-          </button>
+        <nav className="mobile-bottom-nav marketplace-bottom-nav" aria-label="Mobile navigation">
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><Search size={17} /><span>Home</span></button>
+          <button type="button" onClick={() => setDashboardOpen(true)}><Heart size={17} /><span>Saved</span></button>
+          <button type="button" className="mobile-nav-add" onClick={openListItem} aria-label="List an item"><span className="mobile-nav-add-icon"><Plus size={20} /></span><span>List</span></button>
+          <button type="button" onClick={openRequests} className="mobile-nav-with-badge"><Inbox size={17} /><span>Requests</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>
+          <button type="button" onClick={openProfile}><UserRound size={17} /><span>Profile</span></button>
         </nav>
       )}
 
@@ -2028,61 +2024,52 @@ function ItemCard({
   onRequest,
   onReport,
 }) {
+  const priceLabel = item.lending_type === "paid" && item.price_per_day
+    ? `₹${item.price_per_day}/day`
+    : "Free";
+
   return (
-    <article className="item-card upgraded-item-card">
-      <button
-        type="button"
-        className="favorite-floating-button"
-        onClick={(event) => {
-          event.stopPropagation();
-          onFavorite();
-        }}
-        aria-label={isFavorite ? "Remove from saved items" : "Save item"}
-      >
-        <Heart size={17} fill={isFavorite ? "currentColor" : "none"} />
-      </button>
-
-      <button className="item-card-click" onClick={onOpen} type="button">
-        <div className="item-image">
-          {item.image_url ? (
-            <img src={item.image_url} alt={item.name} loading="lazy" />
-          ) : (
-            <div className="item-placeholder">{getCategoryIcon(item.category)}</div>
-          )}
-          <div className="item-category">{item.category}</div>
-          {item.lending_type === "paid" && item.price_per_day ? (
-            <div className="item-paid-pill">₹{item.price_per_day}/day</div>
-          ) : (
-            <div className="item-free-pill">Free</div>
-          )}
-        </div>
-
-        <div className="item-content">
+    <article className="item-card upgraded-item-card compact-market-card">
+      <div className="compact-card-media-wrap">
+        <button
+          type="button"
+          className="favorite-floating-button"
+          onClick={(event) => { event.stopPropagation(); onFavorite(); }}
+          aria-label={isFavorite ? "Remove from saved items" : "Save item"}
+        >
+          <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
+        </button>
+        <button className="item-card-click" onClick={onOpen} type="button">
+          <div className="item-image">
+            {item.image_url ? <img src={item.image_url} alt={item.name} loading="lazy" /> : <div className="item-placeholder">{getCategoryIcon(item.category)}</div>}
+            <div className="item-category">{item.category}</div>
+            <div className={item.lending_type === "paid" ? "item-paid-pill" : "item-free-pill"}>{priceLabel}</div>
+          </div>
+        </button>
+      </div>
+      <div className="item-content compact-item-content">
+        <button className="compact-item-open" onClick={onOpen} type="button">
           <div className="item-title-row">
             <h3>{item.name}</h3>
             <div className="availability-badge-inline"><span /> Available</div>
           </div>
-          <p className="item-description">{item.description || "Shared locally for occasional use."}</p>
-          <div className="item-meta">
-            <span>{item.condition || "Good condition"}</span>
-            <span className="meta-divider">•</span>
+          <div className="compact-item-subline">
+            <span>{item.condition || "Good condition"}</span><span>•</span>
             <span>{distance !== null && distance !== undefined ? formatDistance(distance) : "Nearby"}</span>
           </div>
-        </div>
-      </button>
-
-      <div className="item-bottom upgraded-item-bottom">
-        <div className="item-owner-caption"><UserRound size={14} /> Shared by a local member</div>
-        <div className="item-bottom-actions">
-          <button type="button" className="tiny-icon-button" onClick={onReport} aria-label="Report listing"><Flag size={15} /></button>
-          <button className="request-button" onClick={onRequest} type="button">
-            Request <ArrowRight size={15} />
-          </button>
+        </button>
+        <div className="item-bottom compact-item-bottom">
+          <div className="item-owner-caption"><UserRound size={12} /> Local member</div>
+          <div className="item-bottom-actions">
+            <button type="button" className="tiny-icon-button" onClick={onReport} aria-label="Report listing"><Flag size={14} /></button>
+            <button className="request-button" onClick={onRequest} type="button">Request <ArrowRight size={14} /></button>
+          </div>
         </div>
       </div>
     </article>
   );
 }
+
 function ItemDetailsModal({
   item,
   distance,
@@ -3156,6 +3143,7 @@ function RequestsModal({
                 onHandover={() => setHandoverRequest(request)}
                 onReturn={() => markReturned(request)}
                 onReview={() => setReviewRequest(request)}
+                onRequestItem={() => request.item && onRequestItem?.(request.item)}
                 onReport={() => onReport({ targetType: "user", targetId: request.borrower_id === session.user.id ? request.owner_id : request.borrower_id })}
                 onRefund={() => requestRefund(request)}
               />
@@ -3207,6 +3195,7 @@ function RequestRow({
   onHandover,
   onReturn,
   onReview,
+  onRequestItem,
   onReport,
   onRefund,
 }) {
@@ -3354,6 +3343,11 @@ function RequestRow({
             <button className="contact-button" type="button" onClick={onReview}>
               <Star size={15} /> Review
             </button>
+            {item?.is_available !== false && onRequestItem && (
+              <button className="contact-button" type="button" onClick={onRequestItem}>
+                <Repeat2 size={15} /> Borrow again
+              </button>
+            )}
             <button className="contact-button" type="button" onClick={onChat}>
               <MessageCircle size={15} /> Chat
             </button>
