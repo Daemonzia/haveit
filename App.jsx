@@ -1120,7 +1120,7 @@ function App() {
               })
             }
           >
-            <div className="brand-mark"><img src="/haveit-logo-mark.png" alt="" aria-hidden="true" /></div>
+            <div className="brand-mark">H</div>
 
             <div>
               <div className="brand-name">
@@ -1173,7 +1173,7 @@ function App() {
                   <span className="user-pill-mobile-label">Profile</span>
                 </button>
 
-                <button className="nav-logout" onClick={logout} type="button" aria-label="Log out of HaveIt">
+                <button className="nav-logout" onClick={logout}>
                   <LogOut size={16} />
                   Logout
                 </button>
@@ -1206,7 +1206,6 @@ function App() {
             <ChevronRight size={17} />
           </button>
           <div className="marketplace-top-actions">
-            {session && <button type="button" onClick={() => setNotificationOpen((current) => !current)} aria-label="Notifications"><Bell size={18} />{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>}
             <button type="button" onClick={shareHaveIt} aria-label="Share HaveIt"><Share2 size={18} /></button>
           </div>
         </div>
@@ -2950,14 +2949,6 @@ function ProfileModal({
                 <LayoutDashboard size={16} />
                 Dashboard
               </button>
-              <button
-                type="button"
-                className="secondary-button profile-quick-logout"
-                onClick={onLogout}
-              >
-                <LogOut size={16} />
-                Log out
-              </button>
             </div>
 
             {locationMessage && (
@@ -4175,7 +4166,7 @@ function AuthModal({
   }
 
   return (
-    <div className="modal-backdrop">
+    <div className="modal-backdrop auth-backdrop">
       <div className="modal">
         <button
           className="modal-close"
@@ -4874,7 +4865,7 @@ function ReportModal({ target, onClose, onSubmit }) {
           <label>Details <span>(optional)</span><textarea value={details} onChange={(event) => setDetails(event.target.value)} rows={4} placeholder="Add any useful context..." /></label>
           {target.targetType === "user" && <label className="checkbox-row"><input type="checkbox" checked={alsoBlock} onChange={(event) => setAlsoBlock(event.target.checked)} /><span><strong>Block this user too</strong><small>They won't appear in your future discovery results.</small></span></label>}
           {error && <div className="form-error">{error}</div>}
-          <button className="modal-submit danger-submit report-submit-button" type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit report"}</button>
+          <button className="modal-submit danger-submit" type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit report"}</button>
         </form>
       </div>
     </div>
