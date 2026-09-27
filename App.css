@@ -8296,54 +8296,144 @@ body {
   }
 }
 
-/* HaveIt stability: authentication screen and single notification control */
-.marketplace-top-actions {
+
+/* =========================================================
+   HAVEIT RECOVERY: AUTH GATE + STABLE MOBILE UI
+   This block intentionally overrides only the presentation layer.
+   ========================================================= */
+.auth-loading-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  background: #f4f8f4;
+  color: #31503a;
+  font-size: 12px;
+  font-weight: 750;
+}
+.auth-loading-screen img { width: 62px; height: 62px; object-fit: contain; border-radius: 18px; }
+
+.auth-page-shell {
+  min-height: 100dvh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 28px 18px;
+  background: linear-gradient(145deg, #eef6ef 0%, #f9fbf8 48%, #edf5ee 100%);
 }
-
-/* The login experience visually replaces the marketplace. */
-.auth-backdrop {
-  background: #f7faf7;
-  backdrop-filter: none;
-  z-index: 10000;
-  padding: 0;
+.auth-page-content {
+  position: relative;
+  z-index: 2;
+  width: min(440px, 100%);
 }
-
-/* Auth modal itself: focused, premium, and independent of the marketplace underneath. */
-.auth-backdrop .modal {
-  width: min(430px, calc(100% - 32px));
-  max-height: min(720px, calc(100dvh - 32px));
-  border: 1px solid #e1e9e2;
-  border-radius: 28px;
-  padding: 32px;
-  box-shadow: 0 24px 70px rgba(25, 55, 38, 0.12);
+.auth-page-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
 }
-
-@media (max-width: 600px) {
-  .auth-backdrop {
-    align-items: center;
-  }
-
-  .auth-backdrop .modal {
-    width: calc(100% - 28px);
-    max-height: calc(100dvh - 28px);
-    padding: 27px 22px 23px;
-    border-radius: 24px;
-  }
+.auth-page-brand img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 16px;
 }
+.auth-page-brand div { display: grid; gap: 2px; }
+.auth-page-brand strong { color: #183a26; font-size: 27px; line-height: 1; letter-spacing: -.8px; }
+.auth-page-brand span { color: #7b897f; font-size: 11px; font-weight: 700; }
+.auth-page-footer { margin: 14px 0 0; text-align: center; color: #849087; font-size: 10px; }
+.auth-page-glow { position: absolute; border-radius: 999px; filter: blur(2px); pointer-events: none; }
+.auth-page-glow-one { width: 260px; height: 260px; top: -90px; right: -70px; background: rgba(61, 135, 82, .10); }
+.auth-page-glow-two { width: 220px; height: 220px; bottom: -100px; left: -80px; background: rgba(103, 158, 115, .08); }
+.auth-modal-standalone { width: 100%; display: flex; justify-content: center; }
+.auth-page-card {
+  width: min(420px, 100%) !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border: 1px solid #dfe8df !important;
+  border-radius: 24px !important;
+  box-shadow: 0 24px 70px rgba(26, 58, 36, .13) !important;
+}
+.auth-page-card .modal-icon { margin-top: 0; }
+.auth-page-card form { margin-top: 18px; }
+.auth-page-card .modal-submit { min-height: 48px; }
+.auth-extra-actions { margin-top: 16px; }
 
-/* Prevent the compact header login control from ever wrapping. */
-@media (max-width: 760px) {
-  .nav-login {
+/* Real existing HaveIt logo, never replace it with a text H. */
+.brand-mark {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  border-radius: 13px !important;
+  background: #183a26 !important;
+  font-size: 0 !important;
+}
+.brand-mark img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; }
+
+/* Login must never wrap into a tiny 38px icon. */
+.nav-login { min-width: 92px !important; width: auto !important; height: 42px !important; min-height: 42px !important; padding: 0 18px !important; white-space: nowrap !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+
+/* Fixed navigation stays behind every modal/sheet. */
+.mobile-bottom-nav.marketplace-bottom-nav {
+  z-index: 1200 !important;
+  padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+}
+.modal-backdrop { z-index: 5000 !important; }
+.modal-backdrop > * { position: relative; z-index: 5001; }
+.notification-popover { z-index: 4500 !important; }
+.success-toast { z-index: 7000 !important; }
+
+/* Every sheet owns its scroll; the page behind it never blocks the bottom. */
+.modal,
+.requests-modal,
+.dashboard-modal,
+.profile-modal,
+.report-modal,
+.admin-modal,
+.chat-modal {
+  max-height: calc(100dvh - 24px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.report-modal { overflow-y: auto !important; }
+.report-modal form { padding-bottom: 76px !important; }
+.report-modal .modal-submit,
+.report-modal .danger-submit { position: sticky !important; bottom: 0 !important; z-index: 4 !important; margin-top: 12px !important; box-shadow: 0 -10px 20px rgba(255,255,255,.95) !important; }
+
+@media (max-width: 700px) {
+  body { padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important; }
+  .auth-page-shell { padding: 22px 16px; align-items: center; }
+  .auth-page-brand { margin-bottom: 14px; }
+  .auth-page-brand img { width: 48px; height: 48px; border-radius: 15px; }
+  .auth-page-brand strong { font-size: 25px; }
+  .auth-page-card { border-radius: 22px !important; padding: 22px !important; }
+  .auth-page-card .modal-close { display: none !important; }
+  .auth-page-card .modal-icon { margin-bottom: 10px; }
+  .mobile-bottom-nav.marketplace-bottom-nav {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
     width: auto !important;
-    min-width: 78px !important;
-    height: 42px !important;
-    padding: 0 16px !important;
-    white-space: nowrap !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    height: 68px !important;
+    padding: 5px !important;
+    border-radius: 22px !important;
   }
+  .mobile-bottom-nav.marketplace-bottom-nav button { min-height: 56px !important; }
+  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add-icon { width: 44px !important; height: 44px !important; }
+  .modal-backdrop { padding: 10px !important; }
+  .modal,
+  .requests-modal,
+  .dashboard-modal,
+  .profile-modal,
+  .report-modal,
+  .admin-modal,
+  .chat-modal { max-height: calc(100dvh - 20px) !important; }
 }
