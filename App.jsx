@@ -229,6 +229,7 @@ function loadRazorpayCheckoutScript() {
 
 function App() {
   const [session, setSession] = useState(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [profile, setProfile] = useState(null);
 
   const [items, setItems] = useState([]);
@@ -305,6 +306,7 @@ function App() {
     } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
         setSession(newSession);
+        setSessionChecked(true);
 
         if (newSession) {
           loadProfile(newSession.user.id);
@@ -389,6 +391,8 @@ function App() {
       await loadProfile(currentSession.user.id);
       await loadFeatureData(currentSession.user.id);
     }
+
+    setSessionChecked(true);
   }
 
   async function loadFeatureData(userId) {
@@ -1107,6 +1111,29 @@ function App() {
     setAvailableItemIds(null);
   }
 
+  if (!sessionChecked) {
+    return (
+      <div className="auth-loading-screen">
+        <img src="/haveit-logo-mark.png" alt="HaveIt" />
+        <span>Loading HaveIt…</span>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <AuthPage
+        mode={authMode}
+        setMode={setAuthMode}
+        onInstall={promptInstallApp}
+        onAdminSuccess={() => {
+          setAdminOpen(true);
+          setSessionChecked(true);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="app-shell">
       <header className="navbar">
@@ -1120,7 +1147,7 @@ function App() {
               })
             }
           >
-            <div className="brand-mark">H</div>
+            <div className="brand-mark"><img src="/haveit-logo-mark.png" alt="" aria-hidden="true" /></div>
 
             <div>
               <div className="brand-name">
@@ -1206,6 +1233,7 @@ function App() {
             <ChevronRight size={17} />
           </button>
           <div className="marketplace-top-actions">
+            {session && <button type="button" onClick={() => setNotificationOpen((current) => !current)} aria-label="Notifications"><Bell size={18} />{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>}
             <button type="button" onClick={shareHaveIt} aria-label="Share HaveIt"><Share2 size={18} /></button>
           </div>
         </div>
@@ -4083,6 +4111,34 @@ function RequestStatus({ status }) {
   );
 }
 
+function AuthPage({ mode, setMode, onInstall, onAdminSuccess }) {
+  return (
+    <div className="auth-page-shell">
+      <div className="auth-page-glow auth-page-glow-one" />
+      <div className="auth-page-glow auth-page-glow-two" />
+      <div className="auth-page-content">
+        <div className="auth-page-brand">
+          <img src="/haveit-logo-mark.png" alt="HaveIt" />
+          <div>
+            <strong>HaveIt</strong>
+            <span>Borrow locally.</span>
+          </div>
+        </div>
+        <AuthModal
+          mode={mode}
+          setMode={setMode}
+          onClose={() => {}}
+          onInstall={onInstall}
+          onSuccess={() => {}}
+          onAdminSuccess={onAdminSuccess}
+          standalone
+        />
+        <p className="auth-page-footer">Borrow useful things from people nearby.</p>
+      </div>
+    </div>
+  );
+}
+
 function AuthModal({
   mode,
   setMode,
@@ -4090,6 +4146,7 @@ function AuthModal({
   onSuccess,
   onAdminSuccess,
   onInstall,
+  standalone = false,
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] =
@@ -4166,14 +4223,18 @@ function AuthModal({
   }
 
   return (
-    <div className="modal-backdrop auth-backdrop">
-      <div className="modal">
-        <button
-          className="modal-close"
-          onClick={onClose}
-        >
-          <X size={20} />
-        </button>
+    <div className={standalone ? "auth-modal-standalone" : "modal-backdrop"}>
+      <div className={standalone ? "modal auth-page-card" : "modal"}>
+        {!standalone && (
+          <button
+            className="modal-close"
+            onClick={onClose}
+            type="button"
+            aria-label="Close login"
+          >
+            <X size={20} />
+          </button>
+        )}
 
         <div className="modal-icon">
           {mode === "login"
