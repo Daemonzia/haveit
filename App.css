@@ -81,16 +81,16 @@ img {
 }
 
 .brand-mark {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: #1e3327;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 800;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-logo-image {
+  border-radius: 0;
+  background: transparent;
 }
 
 .brand-name {
@@ -8166,4 +8166,61 @@ body {
   .marketplace-category-rail button { min-width:62px; }
   .marketplace-category-icon { width:42px;height:42px; }
   .items-grid { gap:8px; }
+}
+
+
+/* HaveIt identity refresh — handshake H logo */
+.brand-logo-image {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+  padding: 0;
+  border-radius: 0 !important;
+  background: transparent !important;
+  object-fit: contain;
+}
+
+.brand-name {
+  letter-spacing: -0.65px;
+  font-weight: 850;
+  background: linear-gradient(100deg, #073f36 0%, #0b5f4e 58%, #19c889 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-tagline {
+  color: #6d7d74;
+  letter-spacing: 0.02em;
+}
+
+.auth-brand-lockup {
+  display: flex;
+  justify-content: center;
+  margin: 2px auto 4px;
+}
+
+.auth-brand-logo {
+  width: min(210px, 68vw);
+  height: auto;
+  max-height: 170px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 430px) {
+  .brand-logo-image {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+  }
+
+  .brand-name {
+    font-size: 17px;
+  }
+
+  .auth-brand-logo {
+    width: 180px;
+    max-height: 145px;
+  }
 }
