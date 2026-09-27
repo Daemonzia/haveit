@@ -619,7 +619,7 @@ function App() {
     setBlockedUserIds((current) => current.filter((id) => id !== userId));
   }
 
-  async function submitReport({ targetType, targetId, reason, details, alsoBlock }) {
+  async function submitReport({ targetType, targetId, reason, details }) {
     if (!session) return false;
 
     const { error } = await supabase
@@ -637,9 +637,6 @@ function App() {
       return false;
     }
 
-    if (alsoBlock && targetType === "user") {
-      await blockUser(targetId);
-    }
 
     setSuccessMessage("Thanks. Your report has been recorded.");
     setTimeout(() => setSuccessMessage(""), 3500);
@@ -1233,7 +1230,6 @@ function App() {
             <ChevronRight size={17} />
           </button>
           <div className="marketplace-top-actions">
-            {session && <button type="button" onClick={() => setNotificationOpen((current) => !current)} aria-label="Notifications"><Bell size={18} />{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>}
             <button type="button" onClick={shareHaveIt} aria-label="Share HaveIt"><Share2 size={18} /></button>
           </div>
         </div>
@@ -4900,7 +4896,6 @@ function OfferNeedModal({ need, session, items, onClose, onSuccess }) {
 function ReportModal({ target, onClose, onSubmit }) {
   const [reason, setReason] = useState("Wrong or misleading listing");
   const [details, setDetails] = useState("");
-  const [alsoBlock, setAlsoBlock] = useState(target.targetType === "user");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -4908,7 +4903,7 @@ function ReportModal({ target, onClose, onSubmit }) {
     event.preventDefault();
     setLoading(true);
     setError("");
-    const ok = await onSubmit({ targetType: target.targetType, targetId: target.targetId, reason, details, alsoBlock });
+    const ok = await onSubmit({ targetType: target.targetType, targetId: target.targetId, reason, details });
     if (!ok) setError("We couldn't record this report. Please try again.");
     setLoading(false);
   }
@@ -4924,7 +4919,6 @@ function ReportModal({ target, onClose, onSubmit }) {
         <form onSubmit={submit}>
           <label>Reason<select value={reason} onChange={(event) => setReason(event.target.value)}><option>Wrong or misleading listing</option><option>Scam or suspicious behavior</option><option>Unsafe or inappropriate behavior</option><option>Payment problem</option><option>Item was not as described</option><option>Harassment</option><option>Other</option></select></label>
           <label>Details <span>(optional)</span><textarea value={details} onChange={(event) => setDetails(event.target.value)} rows={4} placeholder="Add any useful context..." /></label>
-          {target.targetType === "user" && <label className="checkbox-row"><input type="checkbox" checked={alsoBlock} onChange={(event) => setAlsoBlock(event.target.checked)} /><span><strong>Block this user too</strong><small>They won't appear in your future discovery results.</small></span></label>}
           {error && <div className="form-error">{error}</div>}
           <button className="modal-submit danger-submit" type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit report"}</button>
         </form>
