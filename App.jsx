@@ -1091,16 +1091,15 @@ function App() {
               })
             }
           >
-            <div className="brand-mark">H</div>
+            <img
+              className="brand-mark brand-logo-image"
+              src="/haveit-logo-mark.png"
+              alt="HaveIt"
+            />
 
             <div>
-              <div className="brand-name">
-                HaveIt
-              </div>
-
-              <div className="brand-tagline">
-                Borrow locally.
-              </div>
+              <div className="brand-name">HaveIt</div>
+              <div className="brand-tagline">Trust • Share • Use</div>
             </div>
           </button>
 
@@ -4144,6 +4143,14 @@ function AuthModal({
         >
           <X size={20} />
         </button>
+
+        <div className="auth-brand-lockup">
+          <img
+            src="/haveit-logo-full.png"
+            alt="HaveIt — Trust, Share, Use"
+            className="auth-brand-logo"
+          />
+        </div>
 
         <div className="modal-icon">
           {mode === "login"
