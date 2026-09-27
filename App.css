@@ -8296,26 +8296,54 @@ body {
   }
 }
 
-/* =========================================================
-   FINAL MOBILE HEADER SAFETY FIX
-   Keep the existing HaveIt branding/assets untouched.
-   The logged-out mobile login button must never wrap.
-========================================================= */
+/* HaveIt stability: authentication screen and single notification control */
+.marketplace-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The login experience visually replaces the marketplace. */
+.auth-backdrop {
+  background: #f7faf7;
+  backdrop-filter: none;
+  z-index: 10000;
+  padding: 0;
+}
+
+/* Auth modal itself: focused, premium, and independent of the marketplace underneath. */
+.auth-backdrop .modal {
+  width: min(430px, calc(100% - 32px));
+  max-height: min(720px, calc(100dvh - 32px));
+  border: 1px solid #e1e9e2;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 24px 70px rgba(25, 55, 38, 0.12);
+}
+
+@media (max-width: 600px) {
+  .auth-backdrop {
+    align-items: center;
+  }
+
+  .auth-backdrop .modal {
+    width: calc(100% - 28px);
+    max-height: calc(100dvh - 28px);
+    padding: 27px 22px 23px;
+    border-radius: 24px;
+  }
+}
+
+/* Prevent the compact header login control from ever wrapping. */
 @media (max-width: 760px) {
-  .nav-actions .nav-login {
+  .nav-login {
     width: auto !important;
-    min-width: 72px !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    padding: 0 12px !important;
+    min-width: 78px !important;
+    height: 42px !important;
+    padding: 0 16px !important;
+    white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    white-space: nowrap !important;
-    word-break: normal !important;
-    overflow: hidden !important;
-    line-height: 1 !important;
-    font-size: 13px !important;
-    flex: 0 0 auto !important;
   }
 }
