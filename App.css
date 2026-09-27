@@ -2506,7 +2506,7 @@ img {
 }
 
 /* =========================
-   BORROWING + REVIEW + NEEDS
+   HANDOVER + REVIEW + NEEDS
 ========================= */
 
 
@@ -2601,8 +2601,47 @@ img {
   color: #4b6881;
 }
 
+.handover-modal,
 .review-modal {
   width: min(500px, 100%);
+}
+
+.handover-code-display {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin: 6px 0 18px;
+}
+
+.handover-code-display span {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d8e6da;
+  border-radius: 12px;
+  background: #f0f7f1;
+  color: #245636;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.handover-code-input {
+  text-align: center;
+  letter-spacing: 8px;
+  font-size: 25px !important;
+  font-weight: 750 !important;
+}
+
+.handover-code-loading {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #778179;
+  font-size: 13px;
 }
 
 .star-rating {
@@ -7155,1288 +7194,363 @@ body {
   }
 }
 
-/* ==========================================================
-   HAVEIT PROFILE / ADMIN / AUTH PASS
-   ========================================================== */
-.profile-field-hint {
-  display: block !important;
-  margin-top: 5px !important;
-  color: #7b857e !important;
-  font-size: 11px !important;
-  line-height: 1.4 !important;
+
+/* =========================================================
+   HAVEIT FINAL DEVICE + MODAL STABILITY PASS
+   Designed for modern Android/iOS mobile browsers, PWAs,
+   desktop browsers, and fixed bottom navigation.
+========================================================= */
+
+:root {
+  --haveit-mobile-nav-height: 68px;
+  --haveit-modal-safe-bottom: max(20px, env(safe-area-inset-bottom, 0px));
 }
 
-.auth-admin-link {
-  width: 100% !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 7px !important;
-  margin-top: 12px !important;
-  padding: 9px 12px !important;
-  border: 1px solid #dfe7e0 !important;
-  border-radius: 10px !important;
-  background: #f8faf8 !important;
-  color: #35513e !important;
-  font-size: 12px !important;
-  font-weight: 750 !important;
-  cursor: pointer !important;
-}
-
-.auth-admin-link:hover {
-  background: #eef4ef !important;
-}
-
-.admin-item-admin-row {
-  align-items: center !important;
-}
-
-.admin-item-thumb {
-  width: 48px !important;
-  height: 48px !important;
+/* The internal logo must always use the real HaveIt mark. */
+.brand-mark {
   display: grid !important;
   place-items: center !important;
   overflow: hidden !important;
-  border-radius: 10px !important;
-  background: #eef3ee !important;
-  flex: 0 0 auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
-.admin-item-thumb img {
+.brand-mark img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
-}
-
-.admin-item-admin-row.is-deleted {
-  opacity: .65 !important;
-}
-
-.tiny-action.danger {
-  border-color: #ead3d0 !important;
-  background: #fff8f7 !important;
-  color: #9a3d35 !important;
-}
-
-.tiny-action.danger:hover:not(:disabled) {
-  background: #fff0ee !important;
-}
-
-/* Profile modal: compact and scroll-safe on phones. */
-.profile-modal {
-  width: min(620px, calc(100vw - 28px)) !important;
-  max-height: min(88vh, 760px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-
-.profile-modal-header {
-  padding-right: 38px !important;
-}
-
-.profile-modal-header h2 {
-  margin-bottom: 3px !important;
-}
-
-.profile-stat-grid {
-  gap: 9px !important;
-}
-
-.profile-stat-card {
-  min-height: 74px !important;
-  padding: 12px !important;
-}
-
-.profile-detail-list {
-  margin-top: 10px !important;
-}
-
-.profile-detail-row {
-  min-height: 44px !important;
-  padding: 8px 11px !important;
-}
-
-.profile-view-action-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-  margin-top: 12px !important;
-}
-
-.profile-view-action-grid button {
-  min-width: 0 !important;
-  min-height: 42px !important;
-  padding: 7px 8px !important;
-  justify-content: center !important;
-  white-space: normal !important;
-  line-height: 1.15 !important;
-  font-size: 11px !important;
-}
-
-.profile-view-action-grid button:first-child {
-  grid-column: 1 / -1 !important;
-}
-
-.profile-logout-button {
-  min-height: 42px !important;
-  margin-top: 10px !important;
-  padding: 8px 12px !important;
-}
-
-@media (max-width: 700px) {
-  .profile-modal {
-    width: calc(100vw - 18px) !important;
-    max-height: calc(100vh - 26px) !important;
-    border-radius: 18px !important;
-    padding: 16px !important;
-  }
-
-  .profile-modal-header {
-    min-height: 66px !important;
-    gap: 10px !important;
-    margin-bottom: 10px !important;
-  }
-
-  .profile-avatar-large {
-    width: 58px !important;
-    height: 58px !important;
-    flex: 0 0 58px !important;
-  }
-
-  .profile-modal-header h2 {
-    font-size: 19px !important;
-  }
-
-  .profile-modal-header .modal-subtitle {
-    font-size: 11px !important;
-    line-height: 1.35 !important;
-    margin: 0 !important;
-  }
-
-  .profile-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .profile-stat-card {
-    min-height: 68px !important;
-    padding: 10px !important;
-  }
-
-  .profile-stat-card strong {
-    font-size: 16px !important;
-  }
-
-  .profile-detail-row {
-    min-height: 40px !important;
-    gap: 8px !important;
-    font-size: 11px !important;
-  }
-
-  .profile-detail-row strong {
-    max-width: 64% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
-  .profile-view-action-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .profile-view-action-grid button:first-child {
-    grid-column: 1 / -1 !important;
-  }
-
-  .profile-form {
-    gap: 11px !important;
-  }
-
-  .profile-form-actions {
-    position: sticky !important;
-    bottom: -16px !important;
-    padding: 10px 0 0 !important;
-    background: #fff !important;
-  }
-
-  .admin-modal {
-    width: calc(100vw - 18px) !important;
-    max-height: calc(100vh - 26px) !important;
-    border-radius: 18px !important;
-    overflow-y: auto !important;
-  }
-
-  .admin-tabs {
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-  }
-
-  .admin-tabs::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  .admin-item-admin-row {
-    grid-template-columns: 44px minmax(0, 1fr) auto !important;
-    gap: 8px !important;
-  }
-
-  .admin-item-thumb {
-    width: 44px !important;
-    height: 44px !important;
-  }
-
-  .admin-item-admin-row .admin-report-copy small {
-    max-width: 100% !important;
-  }
-}
-/* =========================================================
-   HAVEIT ADMIN UI — FINAL MOBILE + DESKTOP PASS
-========================================================= */
-
-.admin-modal {
-  width: min(920px, calc(100vw - 32px)) !important;
-  max-height: min(88vh, 820px) !important;
-  overflow: hidden !important;
-  position: relative !important;
-  padding: 0 !important;
-  border: 1px solid #dfe8e1 !important;
-  border-radius: 22px !important;
-  background: #ffffff !important;
-  color: #1d2a21 !important;
-  box-shadow: 0 28px 90px rgba(10, 28, 17, .24) !important;
-}
-
-.admin-modal .modal-close {
-  top: 18px !important;
-  right: 18px !important;
-  z-index: 10 !important;
-  width: 38px !important;
-  height: 38px !important;
-  background: #f2f6f2 !important;
-  border: 1px solid #e1e9e2 !important;
-}
-
-.admin-header {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 18px !important;
-  padding: 24px 68px 20px 24px !important;
-  border-bottom: 1px solid #edf1ee !important;
-  background: #ffffff !important;
-}
-
-.admin-header .details-eyebrow {
-  margin-bottom: 5px !important;
-  color: #6e7b72 !important;
-  font-size: 10px !important;
-  font-weight: 850 !important;
-  letter-spacing: .12em !important;
-}
-
-.admin-header h2 {
-  margin: 0 !important;
-  color: #183a26 !important;
-  font-size: 26px !important;
-  line-height: 1.1 !important;
-  letter-spacing: -.5px !important;
-}
-
-.admin-header p {
-  margin: 7px 0 0 !important;
-  color: #748078 !important;
-  font-size: 13px !important;
-  line-height: 1.45 !important;
-}
-
-.admin-header .secondary-button {
-  flex: 0 0 auto !important;
-  min-height: 38px !important;
-  padding: 0 13px !important;
-  border: 1px solid #d9e5db !important;
-  border-radius: 10px !important;
-  background: #f7faf7 !important;
-  color: #31533d !important;
-  font-weight: 750 !important;
-}
-
-.admin-tabs {
-  display: flex !important;
-  align-items: stretch !important;
-  gap: 4px !important;
-  padding: 10px 14px !important;
-  overflow-x: auto !important;
-  border-bottom: 1px solid #e8eee9 !important;
-  background: #f8faf8 !important;
-  scrollbar-width: none !important;
-}
-
-.admin-tabs::-webkit-scrollbar {
-  display: none !important;
-}
-
-.admin-tabs button {
-  flex: 0 0 auto !important;
-  min-height: 38px !important;
-  padding: 0 14px !important;
-  border: 1px solid transparent !important;
-  border-radius: 9px !important;
-  background: transparent !important;
-  color: #617066 !important;
-  font: inherit !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  cursor: pointer !important;
-  white-space: nowrap !important;
-}
-
-.admin-tabs button:hover {
-  background: #eef4ef !important;
-  color: #244a31 !important;
-}
-
-.admin-tabs button.active {
-  border-color: #cfe0d2 !important;
-  background: #ffffff !important;
-  color: #1e5a32 !important;
-  box-shadow: 0 2px 8px rgba(23, 59, 35, .07) !important;
-}
-
-.admin-tabs button span {
-  display: inline-grid !important;
-  place-items: center !important;
-  min-width: 18px !important;
-  height: 18px !important;
-  margin-left: 6px !important;
-  padding: 0 5px !important;
-  border-radius: 999px !important;
-  background: #e8f1e9 !important;
-  color: #2e6940 !important;
-  font-size: 9px !important;
-}
-
-.admin-content {
-  padding: 20px !important;
-  overflow-y: auto !important;
-  max-height: calc(min(88vh, 820px) - 148px) !important;
-  background: #fbfdfb !important;
-}
-
-.admin-stat-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 10px !important;
-}
-
-.admin-stat-grid > div {
-  min-width: 0 !important;
-  padding: 15px !important;
-  border: 1px solid #e1e9e2 !important;
-  border-radius: 14px !important;
-  background: #ffffff !important;
-  box-shadow: 0 3px 12px rgba(25, 48, 32, .045) !important;
-}
-
-.admin-stat-grid span {
   display: block !important;
-  margin-bottom: 6px !important;
-  color: #78847b !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
+  object-fit: contain !important;
 }
 
-.admin-stat-grid strong {
-  display: block !important;
-  color: #173d26 !important;
-  font-size: 23px !important;
-  line-height: 1.1 !important;
-}
-
-.admin-note {
-  display: flex !important;
-  align-items: flex-start !important;
-  gap: 9px !important;
-  margin-top: 12px !important;
-  padding: 13px 14px !important;
-  border: 1px solid #dce8de !important;
-  border-radius: 12px !important;
-  background: #f3f8f3 !important;
-  color: #506058 !important;
-  font-size: 12px !important;
-  line-height: 1.45 !important;
-}
-
-.admin-note svg {
-  flex: 0 0 auto !important;
-  margin-top: 1px !important;
-  color: #2d6940 !important;
-}
-
-.admin-list {
-  display: grid !important;
-  gap: 9px !important;
-  padding: 16px !important;
-  overflow-y: auto !important;
-  max-height: calc(min(88vh, 820px) - 148px) !important;
-  background: #fbfdfb !important;
-}
-
-.admin-report-row {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) auto !important;
-  align-items: center !important;
-  gap: 12px !important;
-  min-width: 0 !important;
-  padding: 12px !important;
-  border: 1px solid #e1e9e2 !important;
-  border-radius: 13px !important;
-  background: #ffffff !important;
-}
-
-.admin-report-icon {
-  width: 38px !important;
-  height: 38px !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 10px !important;
-  background: #eef5ef !important;
-  color: #2c6840 !important;
-}
-
-.admin-report-copy {
-  min-width: 0 !important;
-  display: grid !important;
-  gap: 3px !important;
-}
-
-.admin-report-copy strong {
-  color: #24372a !important;
-  font-size: 13px !important;
-  line-height: 1.25 !important;
-}
-
-.admin-report-copy span,
-.admin-report-copy small {
-  color: #718078 !important;
-  font-size: 11px !important;
-  line-height: 1.35 !important;
-  overflow-wrap: anywhere !important;
-}
-
-.admin-report-copy small {
-  color: #879189 !important;
-}
-
-.admin-row-actions {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-end !important;
-  gap: 6px !important;
-  flex-wrap: wrap !important;
-}
-
-.admin-status-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 27px !important;
-  padding: 0 9px !important;
-  border-radius: 999px !important;
-  background: #edf4ee !important;
-  color: #376046 !important;
-  font-size: 10px !important;
-  font-weight: 800 !important;
-  white-space: nowrap !important;
-}
-
-.admin-item-thumb {
-  width: 50px !important;
-  height: 50px !important;
-  border-radius: 10px !important;
-  background: #eef3ee !important;
-}
-
-.admin-modal .dashboard-empty {
-  min-height: 160px !important;
-  display: grid !important;
-  place-items: center !important;
-  align-content: center !important;
-  gap: 5px !important;
-  padding: 24px !important;
-  border: 1px dashed #d9e4da !important;
-  border-radius: 14px !important;
-  background: #ffffff !important;
-  color: #718078 !important;
-  text-align: center !important;
-}
-
-.admin-modal .requests-loading {
-  min-height: 220px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  color: #6f7c73 !important;
-  background: #fbfdfb !important;
-}
-
-@media (max-width: 700px) {
-  .admin-modal {
-    width: calc(100vw - 16px) !important;
-    max-height: calc(100vh - 28px) !important;
-    border-radius: 18px !important;
-  }
-
-  .admin-header {
-    gap: 10px !important;
-    padding: 18px 58px 15px 16px !important;
-  }
-
-  .admin-header h2 {
-    font-size: 21px !important;
-  }
-
-  .admin-header p {
-    font-size: 11px !important;
-    max-width: 240px !important;
-  }
-
-  .admin-header .secondary-button {
-    width: 38px !important;
-    min-width: 38px !important;
-    padding: 0 !important;
-    font-size: 0 !important;
-  }
-
-  .admin-header .secondary-button svg {
-    margin: 0 !important;
-  }
-
-  .admin-tabs {
-    padding: 8px 10px !important;
-    gap: 4px !important;
-  }
-
-  .admin-tabs button {
-    min-height: 36px !important;
-    padding: 0 11px !important;
-    font-size: 11px !important;
-  }
-
-  .admin-content,
-  .admin-list {
-    padding: 12px !important;
-    max-height: calc(100vh - 175px) !important;
-  }
-
-  .admin-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .admin-stat-grid > div {
-    padding: 12px !important;
-  }
-
-  .admin-stat-grid strong {
-    font-size: 20px !important;
-  }
-
-  .admin-report-row {
-    grid-template-columns: 42px minmax(0, 1fr) !important;
-    gap: 9px !important;
-  }
-
-  .admin-report-row .admin-row-actions {
-    grid-column: 2 !important;
-    justify-content: flex-start !important;
-  }
-
-  .admin-item-admin-row {
-    grid-template-columns: 44px minmax(0, 1fr) !important;
-  }
-
-  .admin-item-thumb {
-    width: 44px !important;
-    height: 44px !important;
-  }
-
-  .admin-item-admin-row .admin-row-actions {
-    grid-column: 2 !important;
-  }
-
-  .admin-note {
-    font-size: 11px !important;
-  }
-}
-
-
-/* =========================================================
-   MARKETPLACE HOME V2
-   Inspired by high-density mobile marketplaces, but branded
-   for HaveIt with borrowing-first actions.
-========================================================= */
-.marketplace-home-shell {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 18px 24px 8px;
-  background: linear-gradient(180deg, #edf6ef 0%, #f7f8f5 92%);
-  border-radius: 0 0 28px 28px;
-}
-
-.marketplace-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.marketplace-location {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  border: 0;
-  background: transparent;
-  color: #183a27;
-  cursor: pointer;
-  text-align: left;
-  padding: 0;
-}
-
-.marketplace-location-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: #1e3327;
-  color: #fff;
-  flex: 0 0 auto;
-}
-
-.marketplace-location span:nth-child(2) {
-  display: grid;
-  min-width: 0;
-}
-
-.marketplace-location small {
-  font-size: 11px;
-  color: #728076;
-  font-weight: 700;
-}
-
-.marketplace-location strong {
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 280px;
-}
-
-.marketplace-top-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.marketplace-top-actions button {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid #dce7de;
-  background: #fff;
-  color: #1e3327;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+/* Never leave native select focus rectangles floating over a filter card.
+   Keep a subtle, contained focus treatment on the wrapper instead. */
+.filter-field {
   position: relative;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
 }
 
-.marketplace-top-actions b {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 99px;
-  background: #d94841;
-  color: #fff;
-  font-size: 10px;
-  display: grid;
-  place-items: center;
+.filter-field:focus-within {
+  border-color: #b8cfbb !important;
+  box-shadow: 0 0 0 3px rgba(65, 125, 78, .10) !important;
 }
 
-.marketplace-search-wrap {
-  position: relative;
-  z-index: 20;
-  max-width: 920px;
-  margin: 0 auto;
+.filter-field select:focus,
+.filter-field select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
 }
 
-.marketplace-search-box {
-  height: 58px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 0 12px 0 18px;
-  border: 1px solid #d6e0d8;
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(30, 51, 39, 0.09);
-  transition: border-color .18s ease, box-shadow .18s ease;
+.availability-filter-row input:focus,
+.availability-filter-row input:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(65, 125, 78, .09) !important;
 }
 
-.marketplace-search-box.is-focused {
-  border-color: #75a783;
-  box-shadow: 0 12px 34px rgba(30, 51, 39, 0.14);
-}
-
-.marketplace-search-box > svg { color: #6d776f; flex: 0 0 auto; }
-.marketplace-search-box input {
-  min-width: 0;
-  flex: 1;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #1e2921;
-  font-size: 16px;
-}
-.marketplace-search-box input::placeholder { color: #9aa19b; }
-.marketplace-search-box > button {
-  border: 0;
-  background: transparent;
-  color: #707a72;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  border-radius: 10px;
-}
-.marketplace-search-box > button:hover { background: #f0f4f0; }
-.marketplace-search-box .voice-search-button,
-.marketplace-search-box .scan-search-button { display: grid; }
-
-.search-suggestion-panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid #dce5dd;
-  border-radius: 18px;
-  padding: 14px;
-  box-shadow: 0 18px 45px rgba(24, 58, 39, .14);
-}
-.search-suggestion-head { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:10px; }
-.search-suggestion-head strong { font-size:13px; color:#26342b; }
-.search-suggestion-head span { font-size:11px; color:#839087; }
-.search-history-row { display:flex; align-items:center; gap:7px; overflow:auto; margin-bottom:10px; padding-bottom:2px; }
-.search-history-row > svg { color:#8b958e; flex:0 0 auto; }
-.search-history-row button,
-.search-suggestion-chips button {
-  border:1px solid #e1e7e2;
-  background:#f8faf8;
-  color:#465249;
-  border-radius:999px;
-  padding:8px 11px;
-  white-space:nowrap;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:700;
-}
-.search-suggestion-chips { display:flex; gap:7px; flex-wrap:wrap; }
-.search-suggestion-chips button { display:inline-flex; align-items:center; gap:5px; }
-
-.marketplace-category-rail {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 17px 2px 10px;
-  scrollbar-width: none;
-}
-.marketplace-category-rail::-webkit-scrollbar { display:none; }
-.marketplace-category-rail button {
-  min-width: 82px;
-  border: 0;
-  background: transparent;
-  color: #59645c;
-  display: grid;
-  justify-items: center;
-  gap: 7px;
-  cursor: pointer;
-  padding: 4px 4px 8px;
-  position: relative;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.marketplace-category-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 16px;
-  display:grid;
-  place-items:center;
-  background:#fff;
-  border:1px solid #dce6de;
-  font-size:24px;
-  box-shadow:0 5px 16px rgba(30,51,39,.06);
-}
-.marketplace-category-rail button.active { color:#1e5c38; }
-.marketplace-category-rail button.active::after {
-  content:"";
-  position:absolute;
-  left:18px;
-  right:18px;
-  bottom:0;
-  height:3px;
-  border-radius:99px;
-  background:#1e5c38;
-}
-
-.marketplace-quick-actions {
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:10px;
-  padding: 10px 0 18px;
-}
-.marketplace-quick-actions > button {
-  min-width:0;
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  align-items:center;
-  gap:10px;
-  border:1px solid #dfe7e1;
-  border-radius:15px;
-  background:#fff;
-  color:#24342a;
-  padding:12px;
-  text-align:left;
-  cursor:pointer;
-  box-shadow:0 5px 18px rgba(30,51,39,.05);
-}
-.marketplace-quick-actions > button > span {
-  width:36px;height:36px;border-radius:11px;background:#e9f4eb;color:#21613a;display:grid;place-items:center;
-}
-.marketplace-quick-actions strong { display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.marketplace-quick-actions small { display:block;margin-top:3px;color:#88928b;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.marketplace-quick-actions > button > svg { color:#9aa49d; }
-
-/* Remove the old hero from the main marketplace flow; the new compact header owns discovery. */
-.hero-section { display:none !important; }
-.search-section { padding-top: 8px; padding-bottom: 8px; }
-.search-section .search-box { display:none; }
-.search-section .filter-row { display:none; }
-.search-section .marketplace-shortcuts { display:none; }
-.search-section .advanced-filter-row { max-width:1240px; margin:0 auto; }
-.search-section .availability-filter-row { max-width:1240px; margin:8px auto 0; }
-
-.items-section,
-.needs-discovery-section,
-.recommendation-section,
-.match-section,
-.trust-section,
-.recently-viewed-section {
-  max-width: 1240px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.items-section { padding-top: 18px; }
-
-.recently-viewed-section { padding: 18px 24px 4px; }
-.recently-viewed-rail { display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px; }
-.recently-viewed-rail::-webkit-scrollbar {display:none;}
-.recent-view-card { min-width:190px; display:flex; gap:10px; align-items:center; border:1px solid #e1e7e2; border-radius:14px; background:#fff; padding:9px; cursor:pointer; text-align:left; }
-.recent-view-image { width:58px;height:58px;border-radius:11px;background:#f0f3ef;display:grid;place-items:center;overflow:hidden;font-size:24px;flex:0 0 auto; }
-.recent-view-image img { width:100%;height:100%;object-fit:cover; }
-.recent-view-card strong { display:block; font-size:12px; color:#25342b; white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:105px; }
-.recent-view-card span { display:block; margin-top:5px; font-size:11px; color:#1d5d37;font-weight:800; }
-.section-link-button { border:0;background:transparent;color:#1f633c;font-size:12px;font-weight:800;cursor:pointer; }
-
-/* Dense marketplace cards */
-.items-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; }
-.item-card { min-width:0; border-radius:16px; }
-.item-image { aspect-ratio:1 / 0.92; }
-.compact-card-media-wrap { border-radius:16px 16px 0 0; }
-.compact-item-content { padding:11px 11px 10px; }
-.item-title-row h3 { font-size:13px; line-height:1.3; }
-.compact-item-subline { font-size:10px; }
-.item-owner-caption { font-size:10px; }
-.request-button { padding:8px 10px; font-size:11px; border-radius:9px; }
-
-/* Mobile marketplace shell */
-@media (max-width: 760px) {
-  .navbar { position:sticky; top:0; z-index:120; }
-  .nav-inner { height:62px; padding:0 14px; }
-  .brand-tagline, .nav-actions .requests-nav-button, .nav-actions .dashboard-nav-button, .nav-actions .install-nav-button, .nav-actions .nav-logout, .nav-actions .nav-list-button, .user-pill-name { display:none !important; }
-  .brand-mark { width:34px;height:34px;border-radius:10px;font-size:18px; }
-  .brand-name { font-size:18px; }
-  .nav-actions { gap:7px; }
-  .icon-nav-button, .nav-login { width:38px;height:38px;padding:0;border-radius:12px;display:grid;place-items:center; }
-  .user-pill { padding:0;border:0;background:transparent; }
-  .user-avatar { width:38px;height:38px; }
-
-  .marketplace-home-shell { padding:12px 12px 9px; border-radius:0 0 22px 22px; }
-  .marketplace-topline { margin-bottom:10px; }
-  .marketplace-location-icon { width:34px;height:34px;border-radius:11px; }
-  .marketplace-location strong { max-width:190px; font-size:13px; }
-  .marketplace-location small { font-size:10px; }
-  .marketplace-top-actions button { width:36px;height:36px;border-radius:11px; }
-  .marketplace-search-box { height:54px; border-radius:15px; padding-left:14px; }
-  .marketplace-search-box input { font-size:14px; }
-  .marketplace-search-box .scan-search-button { display:none; }
-  .marketplace-category-rail { gap:9px; padding-top:14px; }
-  .marketplace-category-rail button { min-width:67px; font-size:10px; }
-  .marketplace-category-icon { width:45px;height:45px;border-radius:14px;font-size:21px; }
-  .marketplace-quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding-bottom:12px; }
-  .marketplace-quick-actions > button { padding:10px; border-radius:13px; gap:8px; }
-  .marketplace-quick-actions > button > span { width:32px;height:32px;border-radius:10px; }
-  .marketplace-quick-actions small { font-size:9px; }
-  .marketplace-quick-actions > button > svg { display:none; }
-
-  .search-section { padding:5px 12px 2px; }
-  .search-section .advanced-filter-row { gap:7px; overflow-x:auto; padding-bottom:3px; }
-  .search-section .filter-field { flex:0 0 auto; }
-  .search-section .availability-filter-row { overflow-x:auto; white-space:nowrap; padding-bottom:4px; }
-
-  .items-section { padding:12px 12px 90px; }
-  .section-heading { gap:10px; align-items:flex-end; }
-  .section-heading h2 { font-size:20px; }
-  .items-heading-actions { flex-direction:column; align-items:flex-end; gap:6px; }
-  .view-toggle { display:none; }
-  .items-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-  .item-image { aspect-ratio:1 / .9; }
-  .compact-item-content { padding:9px; }
-  .item-title-row { display:block; }
-  .availability-badge-inline { font-size:8px; margin-top:5px; }
-  .compact-item-subline { font-size:9px; }
-  .item-bottom { display:block; }
-  .item-owner-caption { margin-bottom:7px; }
-  .item-bottom-actions { display:flex; justify-content:space-between; }
-  .request-button { flex:1; justify-content:center; }
-
-  .recently-viewed-section { padding:12px 12px 2px; }
-  .recent-view-card { min-width:170px; }
-
-  .needs-discovery-section,
-  .recommendation-section,
-  .match-section,
-  .trust-section { padding-left:12px !important; padding-right:12px !important; }
-
-  .recommendation-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-  .needs-discovery-grid { grid-template-columns:1fr; }
-
-  .mobile-bottom-nav.marketplace-bottom-nav {
-    position:fixed !important;
-    left:10px !important;
-    right:10px !important;
-    bottom:calc(8px + env(safe-area-inset-bottom)) !important;
-    width:auto !important;
-    height:66px !important;
-    padding:6px 5px !important;
-    border:1px solid #dbe4dd !important;
-    border-radius:22px !important;
-    background:rgba(255,255,255,.96) !important;
-    box-shadow:0 14px 36px rgba(24,58,39,.18) !important;
-    backdrop-filter:blur(18px) !important;
-    z-index:500 !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,1fr) !important;
-    gap:3px !important;
-  }
-  .mobile-bottom-nav.marketplace-bottom-nav button { min-width:0 !important; border:0 !important; background:transparent !important; color:#69736b !important; border-radius:16px !important; display:grid !important; place-items:center !important; gap:2px !important; font-size:9px !important; font-weight:700 !important; padding:4px 2px !important; }
-  .mobile-bottom-nav.marketplace-bottom-nav button span { display:block !important; }
-  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add { color:#fff !important; position:relative !important; }
-  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add-icon { width:43px !important; height:43px !important; border-radius:15px !important; background:#1e5c38 !important; display:grid !important; place-items:center !important; box-shadow:0 8px 18px rgba(30,92,56,.25) !important; }
-  .mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-with-badge b { top:1px !important; right:10px !important; }
-
-  .success-toast { left:12px !important; right:12px !important; bottom:84px !important; width:auto !important; justify-content:center !important; z-index:600 !important; }
-}
-
-@media (min-width: 761px) and (max-width: 1100px) {
-  .items-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
-  .marketplace-quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-
-@media (max-width: 430px) {
-  .marketplace-location strong { max-width:155px; }
-  .marketplace-search-box .voice-search-button { display:none; }
-  .marketplace-category-rail button { min-width:62px; }
-  .marketplace-category-icon { width:42px;height:42px; }
-  .items-grid { gap:8px; }
-}
-
-
-/* =========================================================
-   HAVEIT UI FIXES — PROFILE / INSTALL / LOCATION / DASHBOARD
-   ========================================================= */
-
-/* Install belongs to the login entry point only. */
-.auth-extra-actions {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.auth-install-button,
-.auth-admin-link {
-  width: 100%;
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 850;
-  transition: .16s ease;
-}
-
-.auth-install-button {
-  border: 1px solid #cfe0d2;
-  background: #edf7ef;
-  color: #245b35;
-}
-
-.auth-install-button:hover { background: #e4f2e6; transform: translateY(-1px); }
-.auth-install-button:active { transform: translateY(0); }
-
-.auth-extra-actions .auth-admin-link {
-  margin-top: 0;
-  border: 1px solid #e1e8e2;
-  background: #fff;
-  color: #59675d;
-}
-
-/* The current location is a result, not just a toggle. */
-.profile-location-detail strong {
-  color: #245b35 !important;
-  max-width: 70% !important;
-}
-
-.profile-location-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 10px 12px;
-  border: 1px solid #d8e8da;
-  border-radius: 12px;
-  background: #eef8ef;
-  color: #396347;
-  font-size: 10px;
-  font-weight: 750;
-  line-height: 1.45;
-}
-
-.profile-location-message svg { flex: 0 0 auto; margin-top: 1px; }
-
-/* Make Dashboard unmistakably readable on every background. */
-.dashboard-title-block {
-  min-width: 0;
-}
-
+/* Dashboard typography: never allow the heading to inherit a muted color. */
+.dashboard-title-block h2,
 .dashboard-header h2 {
-  color: #183a27 !important;
-  font-weight: 850 !important;
-  line-height: 1.05 !important;
+  color: #183022 !important;
+  opacity: 1 !important;
   text-shadow: none !important;
-}
-
-.dashboard-header .details-eyebrow {
-  color: #4d7258 !important;
   font-weight: 850 !important;
 }
 
+.dashboard-title-block p,
 .dashboard-header p {
-  color: #66736a !important;
-  line-height: 1.45;
+  color: #6f7d73 !important;
+  opacity: 1 !important;
 }
 
-/* Bottom-nav List label must remain readable beneath the floating + button. */
-.mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add > span:last-child {
-  color: #59675e !important;
-  font-weight: 800 !important;
+/* A modal must sit above the mobile navigation. */
+.modal-backdrop {
+  z-index: 5000 !important;
+  padding: 14px !important;
+  isolation: isolate;
 }
 
-/* Keep empty discovery states compact and readable. */
-.needs-discovery-empty {
-  min-height: 104px !important;
-  padding: 18px 24px !important;
-  line-height: 1.5 !important;
+.mobile-bottom-nav {
+  z-index: 1200 !important;
 }
 
-@media (max-width: 700px) {
-  .marketplace-location strong {
-    max-width: 185px !important;
-    font-size: 13px !important;
-  }
-
-  .profile-location-detail strong {
-    max-width: 61% !important;
-    white-space: normal !important;
-    text-align: right;
-    line-height: 1.25;
-  }
-
-  .profile-location-message {
-    font-size: 10px;
-  }
-
-  .dashboard-header h2 {
-    font-size: 27px !important;
-    color: #183a27 !important;
-  }
-
-  .dashboard-header .details-eyebrow {
-    color: #477052 !important;
-  }
+/* Modern viewport sizing: dvh follows the visible mobile viewport more reliably
+   when browser chrome expands/collapses. */
+.modal,
+.report-modal,
+.dashboard-modal,
+.profile-modal,
+.requests-modal,
+.availability-modal,
+.item-details-modal,
+.need-modal,
+.offer-need-modal,
+.admin-modal {
+  max-height: min(92dvh, 900px);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
-/* ===== Final polish: logo, reports and desktop-friendly dates ===== */
-.brand-mark {
-  background: #eaf5ec !important;
-  overflow: hidden;
-  padding: 3px;
-}
-.brand-mark img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
+/* Report sheet: the entire form scrolls, and the submit action cannot be
+   hidden behind a fixed bottom bar. */
+.report-modal {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 .report-modal form {
-  padding-bottom: 4px;
-}
-.report-submit-area {
-  display: grid;
-  gap: 7px;
-  margin-top: 2px;
-  position: sticky;
-  bottom: -1px;
-  padding-top: 10px;
-  background: #fff;
-}
-.report-submit-area .modal-submit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 48px;
-  font-size: 14px;
-}
-.report-submit-area > span {
-  text-align: center;
-  color: #8a948c;
-  font-size: 10px;
-  line-height: 1.4;
+  min-height: 0;
 }
 
-.friendly-date-field {
+.report-submit-button {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 14px;
+  margin-bottom: 2px;
+  border-radius: 14px !important;
+  box-shadow: 0 -10px 22px rgba(255,255,255,.92);
+}
+
+/* Dashboard is a real scroll container. Nothing should be clipped under the
+   phone's fixed navigation. */
+.dashboard-modal {
+  min-height: 0;
+  max-height: min(92dvh, 900px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.dashboard-content,
+.dashboard-list-section,
+.dashboard-empty,
+.dashboard-item-list,
+.history-list {
   min-width: 0;
 }
-.friendly-date-control {
+
+.dashboard-modal .dashboard-header {
   position: relative;
 }
-.friendly-date-control input[type="date"] {
-  width: 100%;
-  min-width: 0;
-  height: 46px;
-  padding: 0 12px;
-  border: 1px solid #d8e2d8;
-  border-radius: 11px;
-  background: #fff;
-  color: #304238;
-  color-scheme: light;
-  font-size: 14px;
-  font-weight: 700;
-}
-.friendly-date-control input[type="date"]::-webkit-calendar-picker-indicator {
-  width: 20px;
-  height: 20px;
-  opacity: .7;
-  cursor: pointer;
-}
-.date-quick-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 7px;
-  flex-wrap: wrap;
-}
-.date-quick-actions button {
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid #d9e5da;
-  border-radius: 999px;
-  background: #f7fbf7;
-  color: #3e6b49;
-  font-size: 9px;
-  font-weight: 850;
-  cursor: pointer;
-}
-.date-quick-actions button:hover {
-  background: #eaf5ec;
-  border-color: #bcd3bf;
-}
-.borrow-date-card,
-.need-date-card {
-  align-items: start !important;
+
+/* Profile: make the modal itself scroll, while keeping logout visible. */
+.profile-modal {
+  min-height: 0;
+  max-height: min(92dvh, 900px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
+.profile-logout-button {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  min-height: 48px;
+  margin-top: 14px;
+  background: rgba(255,250,250,.98) !important;
+  box-shadow: 0 -10px 18px rgba(255,255,255,.92);
+}
+
+.profile-quick-logout {
+  color: #8a5851 !important;
+  border-color: #eadfdd !important;
+  background: #fffafa !important;
+}
+
+/* Desktop gets a little more room; mobile sheets stay inside the visible viewport. */
 @media (min-width: 701px) {
-  .borrow-date-card,
-  .need-date-card {
-    gap: 16px;
-    padding: 16px;
+  .modal-backdrop {
+    padding: 24px !important;
   }
-  .friendly-date-control input[type="date"] {
-    height: 48px;
-    font-size: 14px;
+
+  .report-modal {
+    max-height: min(88dvh, 820px);
   }
-  .date-quick-actions button {
-    min-height: 32px;
-    padding: 0 11px;
-    font-size: 10px;
+
+  .dashboard-modal {
+    max-height: min(88dvh, 900px) !important;
   }
 }
 
 @media (max-width: 700px) {
-  .brand-mark {
-    padding: 2px;
+  html {
+    min-height: 100%;
+    background: #f7faf7;
   }
-  .report-submit-area {
-    position: static;
+
+  body {
+    min-height: 100dvh;
+    padding-bottom: calc(var(--haveit-mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    overflow-x: hidden;
   }
-  .date-quick-actions {
-    gap: 5px;
+
+  .app-shell {
+    min-height: 100dvh;
+    padding-bottom: 8px;
   }
-  .date-quick-actions button {
-    min-height: 28px;
-    padding: 0 8px;
+
+  /* Keep the 5-item marketplace navigation stable on all modern phones. */
+  .mobile-bottom-nav.marketplace-bottom-nav {
+    position: fixed !important;
+    z-index: 1200 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: calc(var(--haveit-mobile-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 4px 7px calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+    margin: 0 !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav > button {
+    min-height: 52px !important;
+    height: 52px !important;
+    align-self: start !important;
+  }
+
+  /* The active modal owns the whole visible layer. */
+  .modal-backdrop {
+    align-items: flex-end !important;
+    justify-content: center !important;
+    padding: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .modal-backdrop .modal,
+  .modal-backdrop .report-modal,
+  .modal-backdrop .dashboard-modal,
+  .modal-backdrop .profile-modal,
+  .modal-backdrop .requests-modal,
+  .modal-backdrop .availability-modal,
+  .modal-backdrop .item-details-modal,
+  .modal-backdrop .need-modal,
+  .modal-backdrop .offer-need-modal,
+  .modal-backdrop .admin-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 16px) !important;
+    box-sizing: border-box !important;
+    border-radius: 24px 24px 14px 14px !important;
+  }
+
+  .report-modal {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .dashboard-modal {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .profile-modal {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .profile-logout-button {
+    bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .dashboard-header h2 {
+    font-size: clamp(25px, 7vw, 31px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .dashboard-header p {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .dashboard-tabs {
+    position: sticky;
+    top: -1px;
+    z-index: 5;
+    background: rgba(238,244,238,.96) !important;
+    backdrop-filter: blur(12px);
+  }
+
+  .dashboard-stat {
+    min-width: 0;
+  }
+
+  .dashboard-action-grid button {
+    min-width: 0;
+  }
+
+  .report-modal h2 {
+    max-width: calc(100% - 52px);
+    font-size: clamp(24px, 7vw, 30px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .report-modal .modal-subtitle {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  .report-submit-button {
+    min-height: 54px !important;
+    margin-top: 16px;
+    font-size: 14px !important;
+  }
+
+  .filter-field {
+    min-width: 0 !important;
+  }
+
+  .filter-field select {
+    font-size: 12px !important;
+    min-width: 0 !important;
   }
 }
 
-.item-report-button {
-  min-height: 34px;
-  padding: 0 9px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 1px solid #e0e6e0;
-  border-radius: 9px;
-  background: #fff;
-  color: #69756d;
-  font-size: 9px;
-  font-weight: 850;
-  cursor: pointer;
+@media (max-width: 380px) {
+  :root {
+    --haveit-mobile-nav-height: 66px;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  .mobile-bottom-nav.marketplace-bottom-nav > button {
+    font-size: 8px !important;
+  }
+
+  .dashboard-stat {
+    padding: 11px !important;
+  }
+
+  .dashboard-stat strong {
+    font-size: 19px !important;
+  }
 }
-.item-report-button:hover {
-  border-color: #d5aaa4;
-  background: #fff8f7;
-  color: #92584f;
+
+/* Make long modal content visibly scrollable instead of looking cut off. */
+.dashboard-modal::-webkit-scrollbar,
+.profile-modal::-webkit-scrollbar,
+.report-modal::-webkit-scrollbar {
+  width: 7px;
+}
+
+.dashboard-modal::-webkit-scrollbar-thumb,
+.profile-modal::-webkit-scrollbar-thumb,
+.report-modal::-webkit-scrollbar-thumb {
+  background: #cfdad0;
+  border-radius: 999px;
 }
