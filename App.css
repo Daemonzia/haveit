@@ -8445,3 +8445,155 @@ body {
     padding: 3px 0;
   }
 }
+
+/* =========================================================
+   HAVEIT STABILITY FIX — DO NOT REMOVE
+   Keeps overlays above mobile navigation, restores scrolling,
+   keeps the existing logo asset intact, and makes report actions
+   reachable on every mobile screen.
+========================================================= */
+
+/* Existing logo: use the asset already referenced by App.jsx. */
+.brand-mark {
+  overflow: hidden !important;
+  flex: 0 0 auto !important;
+}
+
+.brand-mark img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: inherit !important;
+}
+
+/* The fixed mobile navigation is only navigation. It must NEVER sit
+   above a modal, dashboard, report, profile, request or admin screen. */
+.mobile-bottom-nav.marketplace-bottom-nav {
+  z-index: 900 !important;
+}
+
+/* Every modal/sheet gets a higher stacking context than the nav. */
+.modal-backdrop,
+.report-backdrop,
+.handover-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 5000 !important;
+  isolation: isolate !important;
+}
+
+.modal-backdrop > .modal,
+.modal-backdrop > [class*="-modal"] {
+  position: relative !important;
+  z-index: 5001 !important;
+}
+
+/* Modern mobile viewport + real internal scrolling. */
+.modal,
+.dashboard-modal,
+.requests-modal,
+.profile-modal,
+.admin-modal,
+.item-details-modal,
+.availability-modal,
+.community-modal,
+.upgraded-details-modal {
+  max-height: min(92dvh, 900px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 760px) {
+  .modal-backdrop {
+    padding: max(8px, env(safe-area-inset-top)) 8px
+      max(8px, env(safe-area-inset-bottom)) !important;
+    align-items: flex-end !important;
+  }
+
+  .modal,
+  .dashboard-modal,
+  .requests-modal,
+  .profile-modal,
+  .admin-modal,
+  .item-details-modal,
+  .availability-modal,
+  .community-modal,
+  .upgraded-details-modal {
+    width: 100% !important;
+    max-height: calc(100dvh - 16px) !important;
+    margin: 0 !important;
+    padding-bottom: max(22px, env(safe-area-inset-bottom)) !important;
+    border-radius: 22px 22px 16px 16px !important;
+  }
+
+  /* Never let a fixed nav create a fake bottom limit on modal content. */
+  body {
+    scroll-padding-bottom: 0 !important;
+  }
+
+  /* The actual home page still needs room below its catalogue. */
+  .items-section {
+    padding-bottom: 112px !important;
+  }
+}
+
+/* Reports: the submit action must always be visible/reachable. */
+.report-modal {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.report-modal form {
+  min-height: 0 !important;
+}
+
+.report-modal .modal-submit,
+.report-modal .danger-submit {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 3 !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  margin-top: 14px !important;
+  border-radius: 13px !important;
+  box-shadow: 0 -8px 18px rgba(255,255,255,.92) !important;
+}
+
+/* Restore the icon inside the floating List button if a generic span
+   rule from an older mobile block tries to hide it. */
+.mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add-icon {
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
+  line-height: 0 !important;
+}
+
+.mobile-bottom-nav.marketplace-bottom-nav .mobile-nav-add-icon svg {
+  display: block !important;
+  width: 22px !important;
+  height: 22px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Prevent empty decorative circles from becoming interactive-looking
+   controls when their icon has no content. */
+.modal-icon:empty,
+.empty-state-icon:empty {
+  display: none !important;
+}
+
+/* Keep the dashboard/report/profile sheets above every fixed element. */
+.dashboard-modal,
+.report-modal,
+.profile-modal,
+.requests-modal,
+.admin-modal {
+  isolation: isolate !important;
+}
