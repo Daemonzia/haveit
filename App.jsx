@@ -178,45 +178,6 @@ function getTodayString() {
   return `${year}-${month}-${day}`;
 }
 
-function addDaysToDateString(baseString, days) {
-  const base = baseString ? new Date(`${baseString}T12:00:00`) : new Date();
-  base.setDate(base.getDate() + days);
-  const year = base.getFullYear();
-  const month = String(base.getMonth() + 1).padStart(2, "0");
-  const day = String(base.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function FriendlyDateField({ label, value, min, onChange, quickLabels = ["Today", "Tomorrow", "+1 week"] }) {
-  const quickDays = [0, 1, 7];
-  return (
-    <label className="friendly-date-field">
-      <span><CalendarDays size={15} />{label}</span>
-      <div className="friendly-date-control">
-        <input
-          type="date"
-          min={min}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          inputMode="numeric"
-          aria-label={label}
-          required
-        />
-      </div>
-      <div className="date-quick-actions" aria-label={`${label} quick choices`}>
-        {quickLabels.map((text, index) => {
-          const days = quickDays[index] ?? index;
-          const candidate = addDaysToDateString(value || min || getTodayString(), days);
-          const safeCandidate = min && candidate < min ? min : candidate;
-          return (
-            <button key={text} type="button" onClick={() => onChange(safeCandidate)}>{text}</button>
-          );
-        })}
-      </div>
-    </label>
-  );
-}
-
 function formatRequestDate(dateString) {
   if (!dateString) return "Not specified";
 
@@ -1159,9 +1120,7 @@ function App() {
               })
             }
           >
-            <div className="brand-mark">
-              <img src="/haveit-logo-mark.png" alt="HaveIt" />
-            </div>
+            <div className="brand-mark"><img src="/haveit-logo-mark.png" alt="" aria-hidden="true" /></div>
 
             <div>
               <div className="brand-name">
@@ -1214,7 +1173,7 @@ function App() {
                   <span className="user-pill-mobile-label">Profile</span>
                 </button>
 
-                <button className="nav-logout" onClick={logout}>
+                <button className="nav-logout" onClick={logout} type="button" aria-label="Log out of HaveIt">
                   <LogOut size={16} />
                   Logout
                 </button>
@@ -2286,7 +2245,7 @@ function ItemCard({
         <div className="item-bottom compact-item-bottom">
           <div className="item-owner-caption"><UserRound size={12} /> Local member</div>
           <div className="item-bottom-actions">
-            <button type="button" className="item-report-button" onClick={onReport} aria-label="Report listing"><Flag size={13} /><span>Report</span></button>
+            <button type="button" className="tiny-icon-button" onClick={onReport} aria-label="Report listing"><Flag size={14} /></button>
             <button className="request-button" onClick={onRequest} type="button">Request <ArrowRight size={14} /></button>
           </div>
         </div>
@@ -2444,11 +2403,8 @@ function NeedModal({ onClose, onSuccess }) {
           </div>
 
           <div className="need-date-card">
-            <FriendlyDateField label="Needed from" value={neededFrom} min={today} onChange={handleFromChangeValue => {
-              setNeededFrom(handleFromChangeValue);
-              if (neededUntil && handleFromChangeValue > neededUntil) setNeededUntil(handleFromChangeValue);
-            }} />
-            <FriendlyDateField label="Needed until" value={neededUntil} min={neededFrom || today} onChange={setNeededUntil} quickLabels={["Same day", "Tomorrow", "+1 week"]} />
+            <label><span><CalendarDays size={15} /> Needed from</span><input className="date-input" type="date" min={today} value={neededFrom} onChange={handleFromChange} required /></label>
+            <label><span><CalendarDays size={15} /> Needed until</span><input className="date-input" type="date" min={neededFrom || today} value={neededUntil} onChange={(event) => setNeededUntil(event.target.value)} required /></label>
           </div>
 
           <div className="privacy-note"><ShieldCheck size={17} /><span>We'll use your area to match nearby people, but your exact address is not displayed.</span></div>
@@ -2574,23 +2530,48 @@ function BorrowRequestModal({
 
         <form onSubmit={handleSubmit}>
           <div className="borrow-date-card">
-            <FriendlyDateField
-              label="Start date"
-              value={startDate}
-              min={today}
-              onChange={(nextStart) => {
-                setStartDate(nextStart);
-                if (endDate && nextStart > endDate) setEndDate(nextStart);
-              }}
-            />
+            <label>
+              <span>
+                <CalendarDays size={15} />
+                Start date
+              </span>
 
-            <FriendlyDateField
-              label="Return date"
-              value={endDate}
-              min={startDate || today}
-              onChange={setEndDate}
-              quickLabels={["Same day", "Tomorrow", "+1 week"]}
-            />
+              <input
+                type="date"
+                min={today}
+                value={startDate}
+                onChange={(event) => {
+                  const nextStart = event.target.value;
+                  setStartDate(nextStart);
+
+                  if (endDate && nextStart > endDate) {
+                    setEndDate(nextStart);
+                  }
+                }}
+                inputMode="numeric"
+                aria-label="Borrow start date"
+                required
+              />
+            </label>
+
+            <label>
+              <span>
+                <CalendarDays size={15} />
+                Return date
+              </span>
+
+              <input
+                type="date"
+                min={startDate || today}
+                value={endDate}
+                onChange={(event) =>
+                  setEndDate(event.target.value)
+                }
+                inputMode="numeric"
+                aria-label="Borrow return date"
+                required
+              />
+            </label>
           </div>
 
           <div className="request-summary">
@@ -2968,6 +2949,14 @@ function ProfileModal({
               >
                 <LayoutDashboard size={16} />
                 Dashboard
+              </button>
+              <button
+                type="button"
+                className="secondary-button profile-quick-logout"
+                onClick={onLogout}
+              >
+                <LogOut size={16} />
+                Log out
               </button>
             </div>
 
@@ -4885,13 +4874,7 @@ function ReportModal({ target, onClose, onSubmit }) {
           <label>Details <span>(optional)</span><textarea value={details} onChange={(event) => setDetails(event.target.value)} rows={4} placeholder="Add any useful context..." /></label>
           {target.targetType === "user" && <label className="checkbox-row"><input type="checkbox" checked={alsoBlock} onChange={(event) => setAlsoBlock(event.target.checked)} /><span><strong>Block this user too</strong><small>They won't appear in your future discovery results.</small></span></label>}
           {error && <div className="form-error">{error}</div>}
-          <div className="report-submit-area">
-            <button className="modal-submit danger-submit" type="submit" disabled={loading}>
-              <Flag size={16} />
-              {loading ? "Submitting report..." : "Submit report"}
-            </button>
-            <span>Your report is sent privately to HaveIt for review.</span>
-          </div>
+          <button className="modal-submit danger-submit report-submit-button" type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit report"}</button>
         </form>
       </div>
     </div>
