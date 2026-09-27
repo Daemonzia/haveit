@@ -8375,7 +8375,15 @@ body {
   background: #183a26 !important;
   font-size: 0 !important;
 }
-.brand-mark img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; }
+.brand-mark img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
 
 /* Login must never wrap into a tiny 38px icon. */
 .nav-login { min-width: 92px !important; width: auto !important; height: 42px !important; min-height: 42px !important; padding: 0 18px !important; white-space: nowrap !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
