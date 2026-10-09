@@ -3288,7 +3288,6 @@ body {
 }
 
 button,
-select,
 input,
 textarea {
   -webkit-appearance: none;
@@ -3789,6 +3788,30 @@ textarea {
 
 .availability-filter-row > span { color: #88928a; font-size: 10px; }
 .clear-date-filter { border: 0; background: transparent; color: #6c866f; font-size: 10px; font-weight: 900; cursor: pointer; }
+
+
+/* Marketplace filter focus: keep keyboard focus visible without the sharp square box. */
+.filter-field {
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.filter-field:focus-within {
+  border-color: #8dbb96;
+  box-shadow: 0 0 0 3px rgba(70, 133, 85, 0.13);
+}
+.filter-field select:focus,
+.filter-field select:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.filter-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23657269' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
 
 /* discovery/recommendation/matching */
 .recommendation-section,
