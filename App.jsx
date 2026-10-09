@@ -283,6 +283,17 @@ function App() {
   const [blockedUserIds, setBlockedUserIds] = useState([]);
 
   const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [dashboardInitialTab, setDashboardInitialTab] = useState("overview");
+
+  const openDashboard = () => {
+    setDashboardInitialTab("overview");
+    setDashboardOpen(true);
+  };
+
+  const openSavedItems = () => {
+    setDashboardInitialTab("saved");
+    setDashboardOpen(true);
+  };
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
   const [availabilityItem, setAvailabilityItem] = useState(null);
@@ -1262,7 +1273,7 @@ function App() {
         <div className="marketplace-quick-actions">
           <button type="button" onClick={openListItem}><span><Plus size={19} /></span><div><strong>List an item</strong><small>Share & build trust</small></div><ChevronRight size={16} /></button>
           <button type="button" onClick={openNeed}><span><Search size={18} /></span><div><strong>Post a need</strong><small>Let owners find you</small></div><ChevronRight size={16} /></button>
-          <button type="button" onClick={() => setDashboardOpen(true)}><span><Bookmark size={18} /></span><div><strong>Saved items</strong><small>{favoriteIds.length} saved</small></div><ChevronRight size={16} /></button>
+          <button type="button" onClick={openSavedItems}><span><Bookmark size={18} /></span><div><strong>Saved items</strong><small>{favoriteIds.length} saved</small></div><ChevronRight size={16} /></button>
           <button type="button" onClick={openRequests}><span><Inbox size={18} /></span><div><strong>My activity</strong><small>Requests & returns</small></div><ChevronRight size={16} /></button>
         </div>
       </section>
@@ -1458,7 +1469,7 @@ function App() {
             <div className="marketplace-shortcuts" aria-label="HaveIt shortcuts">
               <button type="button" onClick={openNeed}><Search size={15} /><span>Post a Need</span></button>
               <button type="button" onClick={openRequests}><Inbox size={15} /><span>My requests</span></button>
-              <button type="button" onClick={() => setDashboardOpen(true)}><Heart size={15} /><span>Saved items</span></button>
+              <button type="button" onClick={openSavedItems}><Heart size={15} /><span>Saved items</span></button>
               <button type="button" onClick={openListItem}><Plus size={15} /><span>List an item</span></button>
             </div>
 
@@ -1946,6 +1957,7 @@ function App() {
       {dashboardOpen && session && (
         <DashboardModal
           session={session}
+          initialTab={dashboardInitialTab}
           profile={profile}
           items={items}
           favoriteIds={favoriteIds}
@@ -2016,7 +2028,7 @@ function App() {
       {session && (
         <nav className="mobile-bottom-nav marketplace-bottom-nav" aria-label="Mobile navigation">
           <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><HomeIcon size={17} /><span>Home</span></button>
-          <button type="button" onClick={() => setDashboardOpen(true)}><Heart size={17} /><span>Saved</span></button>
+          <button type="button" onClick={openSavedItems}><Heart size={17} /><span>Saved</span></button>
           <button type="button" className="mobile-nav-add" onClick={openListItem} aria-label="List an item"><span className="mobile-nav-add-icon"><Plus size={20} /></span><span>List</span></button>
           <button type="button" onClick={openRequests} className="mobile-nav-with-badge"><Inbox size={17} /><span>Requests</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}</b>}</button>
           <button type="button" onClick={openProfile}><UserRound size={17} /><span>Profile</span></button>
@@ -2133,7 +2145,7 @@ function AdminModal({ onClose }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState(initialTab);
   const [adminItems, setAdminItems] = useState([]);
   const [itemActionId, setItemActionId] = useState(null);
 
@@ -4617,7 +4629,7 @@ function NotificationPopover({ notifications, unreadCount, onClose, onMarkRead, 
   );
 }
 
-function DashboardModal({ session, profile, items, favoriteIds, blockedUserIds, waitlistedIds, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
+function DashboardModal({ session, initialTab = "overview", profile, items, favoriteIds, blockedUserIds, waitlistedIds, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
   const [tab, setTab] = useState("overview");
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [activity, setActivity] = useState([]);
