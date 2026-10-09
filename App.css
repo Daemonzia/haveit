@@ -8468,3 +8468,390 @@ body {
   .admin-modal,
   .chat-modal { max-height: calc(100dvh - 20px) !important; }
 }
+
+/* =========================================================
+   HAVEIT — COLOURFUL MARKETPLACE REFRESH
+   Visual-only overrides: existing React behaviour is preserved.
+========================================================= */
+:root {
+  --haveit-ink: #172b3a;
+  --haveit-muted: #657586;
+  --haveit-blue: #2874f0;
+  --haveit-teal: #12a594;
+  --haveit-violet: #7856d8;
+  --haveit-orange: #f39a37;
+  --haveit-border: #e5eaf1;
+  --haveit-surface: #ffffff;
+  --haveit-shadow: 0 12px 32px rgba(31, 54, 83, .075);
+}
+
+html { background: #f5f7fb; }
+body {
+  color: var(--haveit-ink);
+  background:
+    radial-gradient(ellipse at 8% 8%, rgba(94, 153, 255, .075), transparent 32%),
+    radial-gradient(ellipse at 92% 16%, rgba(255, 190, 102, .09), transparent 28%),
+    #f5f7fb;
+}
+button, input, select, textarea { font-family: inherit; }
+button { transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid rgba(40, 116, 240, .28) !important;
+  outline-offset: 2px;
+}
+
+/* Crisp white navigation with a branded blue accent. */
+.navbar {
+  background: rgba(255,255,255,.94) !important;
+  border-bottom: 1px solid rgba(220,228,239,.95) !important;
+  box-shadow: 0 4px 18px rgba(29,48,74,.045) !important;
+  backdrop-filter: blur(16px);
+}
+.brand-name { color: #172b3a !important; letter-spacing: -.045em; }
+.brand-tagline { color: #718093 !important; }
+.brand-mark { box-shadow: 0 5px 14px rgba(18,66,44,.18); }
+.nav-actions button:not(.nav-list-button):not(.nav-login):hover,
+.icon-nav-button:hover {
+  border-color: #bcd4ff !important;
+  background: #eef5ff !important;
+}
+.nav-list-button, .nav-list-button:hover {
+  background: linear-gradient(135deg, #2874f0, #4c8cf5) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 7px 16px rgba(40,116,240,.18);
+}
+
+/* Marketplace intro area: clear layers, subtle colour, no heavy green wash. */
+.marketplace-home-shell {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 22px clamp(18px, 4vw, 54px) 15px !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(242,247,255,.96) 58%, rgba(255,248,238,.9)) !important;
+  border: 1px solid rgba(225,232,243,.92);
+  border-top: 0;
+  border-radius: 0 0 30px 30px !important;
+  box-shadow: 0 18px 42px rgba(36,58,88,.055);
+}
+.marketplace-topline { max-width: 1260px; margin: 0 auto 16px !important; }
+.marketplace-location { color: #24394e !important; }
+.marketplace-location-icon {
+  background: linear-gradient(145deg, #e5f0ff, #e4fbf4) !important;
+  color: #2874f0 !important;
+  border: 1px solid #dbe8fa;
+}
+.marketplace-location small { color: #758398 !important; }
+.marketplace-location strong { color: #1c3045 !important; }
+.marketplace-top-actions button {
+  border: 1px solid #e1e8f2 !important;
+  background: #fff !important;
+  box-shadow: 0 5px 14px rgba(30,51,78,.055);
+}
+
+.marketplace-search-wrap { max-width: 1000px !important; margin: 0 auto !important; }
+.marketplace-search-box {
+  min-height: 62px !important;
+  padding: 0 18px !important;
+  border: 1px solid #dce6f3 !important;
+  border-radius: 19px !important;
+  background: #fff !important;
+  box-shadow: 0 12px 28px rgba(40,72,116,.09) !important;
+}
+.marketplace-search-box > svg { color: #2874f0 !important; }
+.marketplace-search-box input { color: #21364b !important; font-size: 15px !important; }
+.marketplace-search-box input::placeholder { color: #9aa7b7 !important; }
+.marketplace-search-box.is-focused {
+  border-color: #8ab5ff !important;
+  box-shadow: 0 0 0 4px rgba(40,116,240,.10), 0 14px 32px rgba(40,72,116,.10) !important;
+}
+.marketplace-search-box > button { border-radius: 11px !important; }
+.marketplace-search-box .voice-search-button,
+.marketplace-search-box .scan-search-button { color: #687c93 !important; }
+
+/* Categories are intentionally centered as a balanced, wrap-safe row. */
+.marketplace-category-rail {
+  width: 100%;
+  max-width: 1120px;
+  margin: 15px auto 0 !important;
+  padding: 15px 8px 13px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 12px clamp(12px, 2.1vw, 27px) !important;
+  overflow: visible !important;
+}
+.marketplace-category-rail button {
+  flex: 0 0 78px;
+  min-width: 72px !important;
+  align-content: start;
+  justify-items: center !important;
+  gap: 8px !important;
+  padding: 5px 4px 10px !important;
+  color: #506175 !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  border-radius: 15px;
+}
+.marketplace-category-rail button:hover { transform: translateY(-3px); }
+.marketplace-category-icon {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(223,231,243,.95) !important;
+  background: linear-gradient(145deg, #fff, #f4f7ff) !important;
+  box-shadow: 0 7px 17px rgba(35,58,91,.075) !important;
+  font-size: 25px !important;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.marketplace-category-rail button:nth-child(1) .marketplace-category-icon { background: linear-gradient(145deg,#fff4d9,#ffe8b3) !important; border-color:#f7dfaa !important; }
+.marketplace-category-rail button:nth-child(2) .marketplace-category-icon { background: linear-gradient(145deg,#e5f7ed,#c8f0d9) !important; border-color:#c6e9d4 !important; }
+.marketplace-category-rail button:nth-child(3) .marketplace-category-icon { background: linear-gradient(145deg,#e6f0ff,#d1e2ff) !important; border-color:#cfdef9 !important; }
+.marketplace-category-rail button:nth-child(4) .marketplace-category-icon { background: linear-gradient(145deg,#fff0e3,#ffddc1) !important; border-color:#f8dcc4 !important; }
+.marketplace-category-rail button:nth-child(5) .marketplace-category-icon { background: linear-gradient(145deg,#f0eaff,#ded4ff) !important; border-color:#e0d7fb !important; }
+.marketplace-category-rail button:nth-child(6) .marketplace-category-icon { background: linear-gradient(145deg,#e1fbf6,#c8f4eb) !important; border-color:#c8eee6 !important; }
+.marketplace-category-rail button:nth-child(7) .marketplace-category-icon { background: linear-gradient(145deg,#fff0f4,#ffdae5) !important; border-color:#f7d9e3 !important; }
+.marketplace-category-rail button:nth-child(8) .marketplace-category-icon { background: linear-gradient(145deg,#fff7d9,#ffedaa) !important; border-color:#f4e6b1 !important; }
+.marketplace-category-rail button:nth-child(9) .marketplace-category-icon { background: linear-gradient(145deg,#e8eff7,#dce5f0) !important; border-color:#dbe3ed !important; }
+.marketplace-category-rail button:hover .marketplace-category-icon,
+.marketplace-category-rail button.active .marketplace-category-icon {
+  transform: translateY(-2px) scale(1.035);
+  box-shadow: 0 10px 22px rgba(40,91,164,.14) !important;
+}
+.marketplace-category-rail button.active { color: #2166d5 !important; }
+.marketplace-category-rail button.active::after {
+  left: 22px !important; right: 22px !important; bottom: 0 !important;
+  height: 3px !important; background: #2874f0 !important;
+}
+
+/* Action tiles each get a small colour identity without losing clarity. */
+.marketplace-quick-actions {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 12px 0 5px !important;
+  gap: 13px !important;
+}
+.marketplace-quick-actions > button {
+  min-height: 82px;
+  border: 1px solid #e4eaf3 !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: 0 7px 20px rgba(35,58,91,.055) !important;
+  padding: 14px !important;
+}
+.marketplace-quick-actions > button:hover {
+  transform: translateY(-3px);
+  border-color: #c9dcfa !important;
+  box-shadow: 0 13px 25px rgba(35,58,91,.10) !important;
+}
+.marketplace-quick-actions > button > span {
+  width: 40px !important; height: 40px !important; border-radius: 13px !important;
+  background: linear-gradient(145deg,#e7f0ff,#dceaff) !important;
+  color: #2874f0 !important;
+}
+.marketplace-quick-actions > button:nth-child(2) > span { background:linear-gradient(145deg,#e2fbf3,#c9f3e7) !important; color:#119780 !important; }
+.marketplace-quick-actions > button:nth-child(3) > span { background:linear-gradient(145deg,#fff1df,#ffe2bc) !important; color:#d98020 !important; }
+.marketplace-quick-actions > button:nth-child(4) > span { background:linear-gradient(145deg,#f0eaff,#e1d8ff) !important; color:#7856d8 !important; }
+.marketplace-quick-actions strong { color: #24384d !important; font-size: 13px !important; }
+.marketplace-quick-actions small { color: #8491a1 !important; font-size: 11px !important; }
+.marketplace-quick-actions > button > svg { color: #9ba9b9 !important; }
+
+/* Filters: unified, airy panel and reliable select controls. */
+.search-section { padding: 12px 22px 10px !important; }
+.advanced-filter-row, .availability-filter-row {
+  border: 1px solid #e3eaf3 !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: 0 7px 22px rgba(35,58,91,.045) !important;
+  padding: 12px !important;
+}
+.advanced-filter-row button, .advanced-filter-row select,
+.availability-filter-row button, .availability-filter-row select,
+.advanced-filter-row .filter-control, .availability-filter-row .filter-control {
+  border-radius: 12px !important;
+  border-color: #e0e7f0 !important;
+  background-color: #fbfcfe !important;
+  color: #3b5065 !important;
+}
+.advanced-filter-row button:hover, .advanced-filter-row select:hover,
+.availability-filter-row button:hover, .availability-filter-row select:hover {
+  border-color: #b8d2fa !important;
+  background-color: #f3f7ff !important;
+}
+select { accent-color: #2874f0; }
+select:focus { outline-color: rgba(40,116,240,.3) !important; }
+
+/* Main sections and item cards gain hierarchy, whitespace and softer depth. */
+.items-section, .needs-discovery-section, .recommendation-section,
+.match-section, .trust-section, .recently-viewed-section {
+  max-width: 1320px !important;
+  padding-left: clamp(16px, 2.5vw, 30px);
+  padding-right: clamp(16px, 2.5vw, 30px);
+}
+.items-section { padding-top: 24px !important; }
+.items-section h2, .needs-discovery-section h2, .recommendation-section h2,
+.match-section h2, .recently-viewed-section h2 {
+  color: #1c3045 !important;
+  letter-spacing: -.035em;
+}
+.item-card {
+  overflow: hidden;
+  border: 1px solid #e5eaf2 !important;
+  border-radius: 19px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgba(35,58,91,.045) !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+.item-card:hover {
+  transform: translateY(-4px);
+  border-color: #c9dcfa !important;
+  box-shadow: 0 16px 30px rgba(35,58,91,.11) !important;
+}
+.item-image, .compact-card-media-wrap { background: linear-gradient(145deg,#f1f6ff,#f9fbff) !important; }
+.compact-item-content { padding: 14px !important; }
+.item-title-row h3 { color: #20364b !important; }
+.compact-item-subline, .item-owner-caption { color: #8491a1 !important; }
+.request-button {
+  border-radius: 11px !important;
+  background: linear-gradient(135deg,#2874f0,#4b8cf5) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 12px rgba(40,116,240,.16);
+}
+.request-button:hover { filter: brightness(.97); box-shadow: 0 8px 17px rgba(40,116,240,.22); }
+.recent-view-card {
+  border-color: #e4eaf3 !important; border-radius: 16px !important;
+  box-shadow: 0 5px 16px rgba(35,58,91,.045);
+}
+.recent-view-image { background: linear-gradient(145deg,#edf4ff,#f8faff) !important; }
+.recent-view-card span { color: #2874f0 !important; }
+.section-link-button { color: #2874f0 !important; }
+
+/* Inputs, dialogs and popovers use the same design language. */
+input:not([type="checkbox"]):not([type="radio"]), textarea, select {
+  border-color: #dfe7f1;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus, select:focus {
+  border-color: #8db7fb !important;
+  box-shadow: 0 0 0 3px rgba(40,116,240,.09) !important;
+}
+.modal, .requests-modal, .dashboard-modal, .profile-modal, .report-modal,
+.admin-modal, .chat-modal {
+  border: 1px solid #e3eaf3 !important;
+  box-shadow: 0 24px 80px rgba(20,37,59,.22) !important;
+}
+
+@media (max-width: 900px) {
+  .marketplace-home-shell { padding-left: 20px !important; padding-right: 20px !important; }
+  .marketplace-quick-actions { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .items-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+}
+@media (max-width: 700px) {
+  body { background: #f5f7fb !important; }
+  .marketplace-home-shell {
+    padding: 14px 13px 10px !important;
+    border-radius: 0 0 23px 23px !important;
+  }
+  .marketplace-search-box { min-height: 54px !important; border-radius: 16px !important; padding: 0 12px !important; }
+  .marketplace-search-box input { font-size: 14px !important; }
+  .marketplace-category-rail {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    padding: 14px 2px 12px !important;
+    scroll-snap-type: x proximity;
+  }
+  .marketplace-category-rail button { flex: 0 0 69px; min-width: 69px !important; scroll-snap-align: center; }
+  .marketplace-category-icon { width: 48px !important; height: 48px !important; border-radius: 16px !important; font-size: 22px !important; }
+  .marketplace-quick-actions { gap: 9px !important; padding-top: 7px !important; }
+  .marketplace-quick-actions > button { min-height: 72px; gap: 8px; padding: 10px !important; border-radius: 15px !important; }
+  .marketplace-quick-actions > button > span { width: 34px !important; height: 34px !important; }
+  .marketplace-quick-actions strong { font-size: 11px !important; }
+  .marketplace-quick-actions small { font-size: 9px !important; }
+  .search-section { padding: 10px 12px !important; }
+  .advanced-filter-row, .availability-filter-row { border-radius: 15px !important; padding: 9px !important; }
+  .items-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 10px !important; }
+  .item-card { border-radius: 15px !important; }
+  .compact-item-content { padding: 10px !important; }
+  .request-button { font-size: 10px !important; padding: 8px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+
+/* =========================================================
+   HAVEIT PATCH — reliable filter focus, centered categories,
+   and visible admin navigation
+========================================================= */
+.admin-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid #c8d8f2;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #edf4ff, #e5efff);
+  color: #2457a7;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.admin-nav-button:hover { background: #dceaff; border-color: #9bbcf0; }
+
+/* The category row is centered on wide screens and scrolls on narrow screens. */
+.filter-row { width: 100%; }
+.category-filters {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: clamp(14px, 2vw, 28px) !important;
+  width: 100%;
+  margin-inline: auto;
+}
+.category-chip { flex: 0 0 auto; }
+
+/* Override later global select/input focus rules only inside marketplace filters.
+   Focus remains accessible, but the square browser outline is removed. */
+.advanced-filter-row .filter-field,
+.advanced-filter-row .filter-field:focus-within {
+  border: 1px solid #dce5f1 !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.advanced-filter-row .filter-field:focus-within {
+  border-color: #8db7fb !important;
+  background: #fbfdff !important;
+  box-shadow: 0 0 0 3px rgba(40, 116, 240, .10) !important;
+}
+.advanced-filter-row .filter-field select,
+.advanced-filter-row .filter-field select:focus,
+.advanced-filter-row .filter-field select:focus-visible {
+  min-width: 0;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .admin-nav-button { min-height: 36px; padding: 0 9px; font-size: 11px; }
+  .category-filters {
+    justify-content: flex-start !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 4px 2px 10px;
+    scrollbar-width: thin;
+  }
+  .category-chip { scroll-snap-align: center; }
+}
