@@ -1188,11 +1188,17 @@ function App() {
                   Requests
                 </button>
 
-                <button className="dashboard-nav-button" onClick={() => setDashboardOpen(true)}>
+                <button className="dashboard-nav-button" onClick={openDashboard}>
                   <LayoutDashboard size={16} />
                   Dashboard
                 </button>
 
+                {isAdmin && (
+                  <button type="button" className="admin-nav-button" onClick={() => setAdminOpen(true)}>
+                    <ShieldCheck size={16} />
+                    Admin
+                  </button>
+                )}
 
                 <button type="button" className="user-pill" onClick={openProfile} title="View and edit your profile">
                   <div className="user-avatar">
@@ -2145,7 +2151,8 @@ function AdminModal({ onClose }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [tab, setTab] = useState(initialTab);
+  // AdminModal has no initialTab prop; use a valid default to prevent a ReferenceError.
+  const [tab, setTab] = useState("overview");
   const [adminItems, setAdminItems] = useState([]);
   const [itemActionId, setItemActionId] = useState(null);
 
@@ -4630,7 +4637,7 @@ function NotificationPopover({ notifications, unreadCount, onClose, onMarkRead, 
 }
 
 function DashboardModal({ session, initialTab = "overview", profile, items, favoriteIds, blockedUserIds, waitlistedIds, onClose, onOpenItem, onRequest, onFavorite, onAvailability, onUnblock, onWaitlist, onItemsChanged }) {
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState(initialTab);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [activity, setActivity] = useState([]);
   const [myItems, setMyItems] = useState([]);
