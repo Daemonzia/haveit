@@ -3472,9 +3472,14 @@ function RequestRow({
   onRefund,
 }) {
   const item = request.item;
+  // Treat the current user as the owner if either the request or the
+  // actual item record identifies them as the owner. Payment is only shown
+  // to the request's borrower, never to the item owner.
   const isOwner =
     request.owner_id === currentUserId ||
     request.item?.owner_id === currentUserId;
+  const isBorrower = request.borrower_id === currentUserId;
+  const canPay = isBorrower && !isOwner;
   const counterpartId = isOwner ? request.borrower_id : request.owner_id;
   const status = String(request.status || "").toLowerCase();
 
@@ -3541,7 +3546,7 @@ function RequestRow({
                   : `Payment required · ${formatInrFromPaise(request.payment_amount_paise)}`}
               </div>
               <div className="contact-actions request-action-grid">
-                {!isOwner && (
+                {canPay && (
                   <button
                     className="contact-button pay-button"
                     type="button"
