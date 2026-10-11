@@ -3130,7 +3130,7 @@ function RequestsModal({
     const itemIds = [...new Set(requestRows.map((request) => request.item_id))];
     const { data, error } = await supabase
       .from("items")
-      .select("id, name, category, condition, image_url, lending_type, price_per_day")
+      .select("id, owner_id, name, category, condition, image_url, lending_type, price_per_day")
       .in("id", itemIds);
 
     if (error) {
@@ -3472,7 +3472,9 @@ function RequestRow({
   onRefund,
 }) {
   const item = request.item;
-  const isOwner = request.owner_id === currentUserId;
+  const isOwner =
+    request.owner_id === currentUserId ||
+    request.item?.owner_id === currentUserId;
   const counterpartId = isOwner ? request.borrower_id : request.owner_id;
   const status = String(request.status || "").toLowerCase();
 
