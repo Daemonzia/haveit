@@ -60,6 +60,8 @@ import {
 import { supabase } from "./lib/supabase";
 import "./App.css";
 
+const ADMIN_EMAIL = "thepratik61@gmail.com";
+
 const categories = [
   "All",
   "Tools",
@@ -321,7 +323,7 @@ function App() {
 
         if (newSession) {
           loadProfile(newSession.user.id);
-          loadFeatureData(newSession.user.id);
+          loadFeatureData(newSession.user.id, newSession.user.email);
         } else {
           setProfile(null);
           setLocation(null);
@@ -400,19 +402,19 @@ function App() {
 
     if (currentSession) {
       await loadProfile(currentSession.user.id);
-      await loadFeatureData(currentSession.user.id);
+      await loadFeatureData(currentSession.user.id, currentSession.user.email);
     }
 
     setSessionChecked(true);
   }
 
-  async function loadFeatureData(userId) {
+  async function loadFeatureData(userId, userEmail) {
     await Promise.all([
       loadFavorites(userId),
       loadNotifications(userId),
       loadBlockedUsers(userId),
       loadWaitlist(),
-      loadAdminStatus(),
+      loadAdminStatus(userEmail),
     ]);
   }
 
@@ -425,9 +427,16 @@ function App() {
     setWaitlistedIds((data || []).map((row) => row.item_id));
   }
 
-  async function loadAdminStatus() {
+  async function loadAdminStatus(userEmail = session?.user?.email) {
+    // The email check controls UI visibility; the Supabase RPC must still enforce
+    // authorization server-side before returning admin privileges.
+    if ((userEmail || "").trim().toLowerCase() !== ADMIN_EMAIL) {
+      setIsAdmin(false);
+      return;
+    }
     const { data, error } = await supabase.rpc("get_my_admin_status_v1");
     if (error) {
+      console.error("Admin status check failed:", error);
       setIsAdmin(false);
       return;
     }
@@ -2155,19 +2164,27 @@ function AdminModal({ onClose }) {
   const [tab, setTab] = useState("overview");
   const [adminItems, setAdminItems] = useState([]);
   const [itemActionId, setItemActionId] = useState(null);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setRefreshing(true);
-    const [dashboardResponse, itemsResponse] = await Promise.all([
-      supabase.rpc("get_haveit_admin_dashboard_v1"),
-      supabase.rpc("get_haveit_admin_items_v1"),
-    ]);
-    if (dashboardResponse.error) { alert(dashboardResponse.error.message); setRefreshing(false); setLoading(false); return; }
-    if (itemsResponse.error) { alert(itemsResponse.error.message); setRefreshing(false); setLoading(false); return; }
-    setData(dashboardResponse.data || null);
-    setAdminItems(itemsResponse.data || []);
-    setRefreshing(false);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const [dashboardResponse, itemsResponse] = await Promise.all([
+        supabase.rpc("get_haveit_admin_dashboard_v1"),
+        supabase.rpc("get_haveit_admin_items_v1"),
+      ]);
+      if (dashboardResponse.error) throw dashboardResponse.error;
+      if (itemsResponse.error) throw itemsResponse.error;
+      setData(dashboardResponse.data || null);
+      setAdminItems(itemsResponse.data || []);
+    } catch (error) {
+      console.error("Admin dashboard load failed:", error);
+      setLoadError(error?.message || "Unable to load admin data. Check the Supabase admin functions and permissions.");
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, []);
@@ -2209,7 +2226,9 @@ function AdminModal({ onClose }) {
         <button className="modal-close" onClick={onClose} type="button"><X size={19} /></button>
         <div className="admin-header"><div><div className="details-eyebrow">OPERATIONS</div><h2>HaveIt Admin</h2><p>Keep the marketplace healthy from one place.</p></div><button type="button" className="secondary-button" onClick={load} disabled={refreshing}><RefreshCw size={15} className={refreshing ? "location-spin" : ""} /> Refresh</button></div>
         <div className="admin-tabs">{[["overview","Overview"],["items","Items"],["reports","Reports"],["payments","Payments"],["refunds","Refunds"]].map(([key,label]) => <button key={key} type="button" className={tab === key ? "active" : ""} onClick={() => setTab(key)}>{label}{key === "reports" && stats.open_reports ? <span>{stats.open_reports}</span> : null}</button>)}</div>
-        {loading ? <div className="requests-loading"><LoaderCircle size={24} className="location-spin" /><span>Loading admin data…</span></div> : tab === "overview" ? (
+        {loading ? <div className="requests-loading"><LoaderCircle size={24} className="location-spin" /><span>Loading admin data…</span></div> : loadError ? (
+          <div className="admin-content"><div className="form-error admin-load-error">{loadError}</div><p className="admin-load-help">The admin screen is open, but the required Supabase admin RPCs may be missing or rejecting this account. Fix the backend functions/permissions, then select Refresh.</p></div>
+        ) : tab === "overview" ? (
           <div className="admin-content"><div className="admin-stat-grid"><div><span>Users</span><strong>{stats.users || 0}</strong></div><div><span>Available items</span><strong>{stats.available_items || 0}</strong></div><div><span>Open reports</span><strong>{stats.open_reports || 0}</strong></div><div><span>Paid volume</span><strong>{formatInrFromPaise(stats.paid_volume_paise || 0)}</strong></div></div><div className="admin-note"><ShieldCheck size={17} /><span>Admin data is returned by server-side functions. Payment secrets never enter the browser.</span></div></div>
         ) : tab === "items" ? (
           <div className="admin-list">
@@ -4127,13 +4146,32 @@ function RequestStatus({ status }) {
 }
 
 function AuthPage({ mode, setMode, onInstall, onAdminSuccess }) {
+  const [adminMode, setAdminMode] = useState(false);
+  const logoTapTimes = useRef([]);
+
+  function handleLogoTap() {
+    const now = Date.now();
+    logoTapTimes.current = logoTapTimes.current.filter((time) => now - time < 3000);
+    logoTapTimes.current.push(now);
+    if (logoTapTimes.current.length >= 5) {
+      logoTapTimes.current = [];
+      setAdminMode((current) => !current);
+    }
+  }
+
   return (
     <div className="auth-page-shell">
       <div className="auth-page-glow auth-page-glow-one" />
       <div className="auth-page-glow auth-page-glow-two" />
       <div className="auth-page-content">
         <div className="auth-page-brand">
-          <img src="/haveit-logo-mark.png" alt="HaveIt" />
+          <img
+            src="/haveit-logo-mark.png"
+            alt="HaveIt"
+            onClick={handleLogoTap}
+            title="HaveIt"
+            style={{ cursor: "default" }}
+          />
           <div>
             <strong>HaveIt</strong>
             <span>Borrow locally.</span>
@@ -4146,6 +4184,8 @@ function AuthPage({ mode, setMode, onInstall, onAdminSuccess }) {
           onInstall={onInstall}
           onSuccess={() => {}}
           onAdminSuccess={onAdminSuccess}
+          adminMode={adminMode}
+          setAdminMode={setAdminMode}
           standalone
         />
         <p className="auth-page-footer">Borrow useful things from people nearby.</p>
@@ -4161,6 +4201,8 @@ function AuthModal({
   onSuccess,
   onAdminSuccess,
   onInstall,
+  adminMode: controlledAdminMode,
+  setAdminMode: setControlledAdminMode,
   standalone = false,
 }) {
   const [name, setName] = useState("");
@@ -4171,7 +4213,9 @@ function AuthModal({
 
   const [loading, setLoading] =
     useState(false);
-  const [adminMode, setAdminMode] = useState(false);
+  const [localAdminMode, setLocalAdminMode] = useState(false);
+  const adminMode = controlledAdminMode ?? localAdminMode;
+  const setAdminMode = setControlledAdminMode ?? setLocalAdminMode;
 
   const [errorMessage, setErrorMessage] =
     useState("");
@@ -4220,6 +4264,12 @@ function AuthModal({
     }
 
     if (adminMode) {
+      if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
+        await supabase.auth.signOut();
+        setErrorMessage("This account does not have HaveIt admin access.");
+        setLoading(false);
+        return;
+      }
       const { data: adminStatus, error: adminError } =
         await supabase.rpc("get_my_admin_status_v1");
 
@@ -4370,17 +4420,6 @@ function AuthModal({
             >
               <Download size={14} />
               Install HaveIt
-            </button>
-            <button
-              type="button"
-              className="auth-admin-link"
-              onClick={() => {
-                setAdminMode((current) => !current);
-                setErrorMessage("");
-              }}
-            >
-              <ShieldAlert size={14} />
-              {adminMode ? "Back to normal login" : "Admin access"}
             </button>
           </div>
         )}
