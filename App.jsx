@@ -1567,6 +1567,7 @@ function App() {
                 <ItemCard
                   key={item.id}
                   item={item}
+                  session={session}
                   distance={item.calculatedDistance}
                   isFavorite={favoriteIds.includes(item.id)}
                   onFavorite={() => toggleFavorite(item.id)}
@@ -1662,6 +1663,7 @@ function App() {
                 <ItemCard
                   key={`recommended-${item.id}`}
                   item={item}
+                  session={session}
                   distance={item.calculatedDistance}
                   isFavorite={favoriteIds.includes(item.id)}
                   onFavorite={() => toggleFavorite(item.id)}
@@ -2262,6 +2264,7 @@ function AdminModal({ onClose }) {
 
 function ItemCard({
   item,
+  session,
   distance,
   isFavorite,
   onFavorite,
@@ -2272,6 +2275,11 @@ function ItemCard({
   const priceLabel = item.lending_type === "paid" && item.price_per_day
     ? `₹${item.price_per_day}/day`
     : "Free";
+
+  // Never show a Request action to the owner of this listing.
+  const isOwner = Boolean(
+    session?.user?.id && item.owner_id === session.user.id
+  );
 
   return (
     <article className="item-card upgraded-item-card compact-market-card">
@@ -2304,10 +2312,23 @@ function ItemCard({
           </div>
         </button>
         <div className="item-bottom compact-item-bottom">
-          <div className="item-owner-caption"><UserRound size={12} /> Local member</div>
+          <div className="item-owner-caption"><UserRound size={12} /> {isOwner ? "Your item" : "Local member"}</div>
           <div className="item-bottom-actions">
             <button type="button" className="tiny-icon-button" onClick={onReport} aria-label="Report listing"><Flag size={14} /></button>
-            <button className="request-button" onClick={onRequest} type="button">Request <ArrowRight size={14} /></button>
+            {isOwner ? (
+              <button
+                type="button"
+                className="request-button own-item-button"
+                disabled
+                aria-label="This is your own item"
+              >
+                Your item
+              </button>
+            ) : (
+              <button className="request-button" onClick={onRequest} type="button">
+                Request <ArrowRight size={14} />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -4803,7 +4824,7 @@ function DashboardModal({ session, initialTab = "overview", profile, items, favo
                   <div className="saved-unavailable-actions"><button type="button" className="primary-button small-primary" onClick={() => onWaitlist(item.id)}><Bell size={14} /> {waitlistedIds.includes(item.id) ? "On waitlist" : "Notify me"}</button><button type="button" className="secondary-button small-primary" onClick={() => onOpenItem(item)}>View</button></div>
                 </article>
               ) : (
-                <ItemCard key={item.id} item={item} distance={null} isFavorite={favoriteIds.includes(item.id)} onFavorite={() => onFavorite(item.id)} onOpen={() => onOpenItem(item)} onRequest={() => onRequest(item)} onReport={() => {}} />
+                <ItemCard key={item.id} item={item} session={session} distance={null} isFavorite={favoriteIds.includes(item.id)} onFavorite={() => onFavorite(item.id)} onOpen={() => onOpenItem(item)} onRequest={() => onRequest(item)} onReport={() => {}} />
               ))}</div>
             )}
           </div>
